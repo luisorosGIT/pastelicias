@@ -277,6 +277,24 @@ import { homePathForRole } from '../../core/utils/home-path';
       flex-wrap: wrap;
     }
     .actions button { height: 42px; }
+    /* Alineación icono+texto dentro de los botones del wizard.
+       Material envuelve el contenido en .mdc-button__label; ahí hacemos flex. */
+    .actions button ::ng-deep .mdc-button__label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1;
+    }
+    .actions button mat-icon {
+      margin: 0 !important;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      line-height: 18px;
+    }
+    .actions button mat-spinner {
+      display: inline-block;
+    }
   `],
 })
 export class OnboardingComponent implements OnInit {
