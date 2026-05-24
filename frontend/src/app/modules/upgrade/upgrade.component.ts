@@ -31,7 +31,8 @@ import { PlanCode } from '../../core/models';
 
       @if (plan.loading() && !plan.state()) {
         <div class="loading"><mat-spinner diameter="48" /></div>
-      } @else if (plan.state(); as p) {
+      }
+      @if (plan.state(); as p) {
         <div class="plans-grid">
           @for (planOption of p.allPlans; track planOption.plan) {
             <div class="plan-card"

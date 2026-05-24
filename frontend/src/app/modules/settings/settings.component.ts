@@ -63,7 +63,8 @@ const ROLE_LABELS: Record<Role, string> = {
 
           @if (plan.loading() && !plan.state()) {
             <div class="loading"><mat-spinner diameter="32" /></div>
-          } @else if (plan.state(); as p) {
+          }
+          @if (plan.state(); as p) {
             <div class="card plan-card">
               <div class="plan-header">
                 <div>
