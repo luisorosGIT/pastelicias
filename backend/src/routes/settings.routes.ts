@@ -14,7 +14,10 @@ import {
   PLAN_LABEL,
   PLAN_PRICE_PEN,
   PlanLimitError,
+  isTrialExpired,
+  trialDaysRemaining,
 } from '../config/plans';
+import { invalidateTrialCache } from '../middleware/trial.middleware';
 import { Plan } from '@prisma/client';
 
 const router = Router();
@@ -239,7 +242,7 @@ router.get('/plan', roles.ownerOnly, async (req: AuthRequest, res: Response) => 
   try {
     const business = await prisma.business.findUnique({
       where: { id: req.user.businessId },
-      select: { plan: true },
+      select: { plan: true, trialEndsAt: true },
     });
     if (!business) return notFound(res, 'Negocio no encontrado');
 
@@ -261,6 +264,10 @@ router.get('/plan', roles.ownerOnly, async (req: AuthRequest, res: Response) => 
       plan,
       label: PLAN_LABEL[plan],
       priceMonthlyPen: PLAN_PRICE_PEN[plan],
+      // Estado del periodo de prueba.
+      trialEndsAt: business.trialEndsAt ? business.trialEndsAt.toISOString() : null,
+      trialDaysRemaining: trialDaysRemaining(business),
+      trialExpired: isTrialExpired(business),
       limits: {
         branches: serializeLimit(limits.branches),
         ingredients: serializeLimit(limits.ingredients),
@@ -328,12 +335,20 @@ router.post('/upgrade', roles.ownerOnly, async (req: AuthRequest, res: Response)
       }
     }
 
+    // Si pasa a un plan pagado, anular el trial (ya no aplica).
+    // Si baja a FREE, le damos 30 días nuevos.
+    const newTrialEndsAt =
+      newPlan === 'FREE'
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        : null;
+
     const updated = await prisma.business.update({
       where: { id: req.user.businessId },
-      data: { plan: newPlan },
+      data: { plan: newPlan, trialEndsAt: newTrialEndsAt },
     });
 
     invalidatePaths('/api/settings');
+    invalidateTrialCache(req.user.businessId);
     return ok(res, updated, `Plan cambiado a ${PLAN_LABEL[newPlan]}`);
   } catch (e) {
     console.error('[settings/upgrade]', e);

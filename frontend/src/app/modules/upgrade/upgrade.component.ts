@@ -48,7 +48,7 @@ import { PlanCode } from '../../core/models';
               <h2 class="plan-name">{{ planOption.label }}</h2>
               <div class="plan-price">
                 <strong>S/ {{ planOption.priceMonthlyPen }}</strong>
-                <span>{{ planOption.priceMonthlyPen === 0 ? 'para siempre' : '/ mes' }}</span>
+                <span>{{ planOption.priceMonthlyPen === 0 ? '· 30 días de prueba' : '/ mes' }}</span>
               </div>
 
               <div class="plan-features">

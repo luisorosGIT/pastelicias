@@ -120,10 +120,14 @@ router.post('/signup', async (req: Request, res: Response) => {
   //      Si falla algo, hacemos rollback de la DB Y borramos el usuario de Supabase Auth.
   try {
     const result = await prisma.$transaction(async (tx) => {
+      // Plan FREE con 30 días de prueba desde el signup. Después de esa
+      // fecha se bloquean los POSTs hasta que el usuario haga upgrade.
+      const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       const business = await tx.business.create({
         data: {
           name: businessName,
           taxRate: 18, // default IGV Perú
+          trialEndsAt,
         },
       });
 

@@ -7,6 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../core/services/auth.service';
 import { BranchService } from '../../../core/services/branch.service';
 import { SettingsService } from '../../../core/services/settings.service';
+import { PlanService } from '../../../core/services/plan.service';
 import { BranchSelectorComponent } from '../branch-selector/branch-selector.component';
 import { Role } from '../../../core/models';
 
@@ -108,6 +109,25 @@ const NAV_ITEMS: NavItem[] = [
             </mat-menu>
           </div>
         </header>
+
+        <!-- Banner del trial gratis: visible cuando quedan ≤7 días o expiró -->
+        @if (plan.shouldShowTrialBanner()) {
+          <div class="trial-banner" [class.expired]="plan.trialExpired()">
+            <mat-icon>{{ plan.trialExpired() ? 'lock' : 'schedule' }}</mat-icon>
+            <span class="trial-msg">
+              @if (plan.trialExpired()) {
+                <strong>Tu prueba gratuita terminó.</strong>
+                Mejora tu plan para seguir usando Pastelicias.
+              } @else {
+                <strong>Tu prueba gratuita termina en {{ plan.trialDaysLeft() }} {{ plan.trialDaysLeft() === 1 ? 'día' : 'días' }}.</strong>
+                Mejora tu plan antes que expire.
+              }
+            </span>
+            <a [routerLink]="['/app/upgrade']" class="trial-cta">
+              Ver planes <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+        }
 
         <!-- Content -->
         <main class="content">
@@ -336,12 +356,64 @@ const NAV_ITEMS: NavItem[] = [
       padding: var(--space-6) var(--space-8);
     }
 
+    /* ─── Banner del trial ─── */
+    .trial-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 24px;
+      background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+      border-bottom: 1px solid #fcd34d;
+      color: #78350f;
+      font-size: 14px;
+      line-height: 1.4;
+      flex-wrap: wrap;
+    }
+    .trial-banner.expired {
+      background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
+      border-bottom-color: #fca5a5;
+      color: #7f1d1d;
+    }
+    .trial-banner > mat-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+    .trial-banner .trial-msg { flex: 1; min-width: 240px; }
+    .trial-banner .trial-msg strong { font-weight: 700; margin-right: 4px; }
+    .trial-banner .trial-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      background: #fff;
+      color: #4648d4;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+    .trial-banner.expired .trial-cta { color: #dc2626; }
+    .trial-banner .trial-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+    .trial-banner .trial-cta mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .mobile-title { display: block; }
       .breadcrumb-container { display: none; }
       .help-btn { display: none; }
       .content { padding: var(--space-4); }
+      .trial-banner { padding: 10px 16px; font-size: 13px; }
     }
   `],
 })
@@ -350,7 +422,8 @@ export class SidebarComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     public branchService: BranchService,
-    private settings: SettingsService
+    private settings: SettingsService,
+    public plan: PlanService
   ) {
     // Initial title
     const url = this.router.url;
@@ -371,7 +444,11 @@ export class SidebarComponent implements OnInit {
     // Asegurar que el nombre del negocio esté disponible para mostrarlo en el sidebar.
     // loadBusiness() es idempotente — si ya está cargado, no re-pide.
     if (this.authService.isAuthenticated()) {
-      await this.settings.loadBusiness();
+      await Promise.all([
+        this.settings.loadBusiness(),
+        // Carga el plan para que el banner del trial se evalúe.
+        this.plan.load(),
+      ]);
     }
   }
 

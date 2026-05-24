@@ -22,6 +22,21 @@ export class PlanService {
   /** Computed: el plan actual del negocio (o null si aún no cargó). */
   readonly currentPlan = computed<PlanCode | null>(() => this._state()?.plan ?? null);
 
+  /** True si el trial gratis ya expiró (FREE + fecha pasada). */
+  readonly trialExpired = computed<boolean>(() => this._state()?.trialExpired ?? false);
+
+  /** Días que faltan para que termine el trial. 0 si expiró o no aplica. */
+  readonly trialDaysLeft = computed<number>(() => this._state()?.trialDaysRemaining ?? 0);
+
+  /** True si vale la pena mostrar el banner de trial (FREE + quedan pocos días o expiró). */
+  readonly shouldShowTrialBanner = computed<boolean>(() => {
+    const s = this._state();
+    if (!s) return false;
+    if (s.plan !== 'FREE') return false;
+    if (!s.trialEndsAt) return false;
+    return s.trialExpired || s.trialDaysRemaining <= 7;
+  });
+
   private readonly baseUrl = `${environment.apiUrl}/settings`;
   private inflight: Promise<void> | null = null;
 

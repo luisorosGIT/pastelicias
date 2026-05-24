@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { branchMiddleware } from '../middleware/branch.middleware';
+import { blockIfTrialExpired } from '../middleware/trial.middleware';
 
 import authRoutes from './auth.routes';
 import inventoryRoutes from './inventory.routes';
@@ -22,6 +23,9 @@ router.use('/auth', authRoutes);
 // Rutas protegidas — todas pasan por authMiddleware + branchMiddleware
 router.use(authMiddleware as any);
 router.use(branchMiddleware as any);
+// Trial expirado: bloquea POST/PUT/PATCH/DELETE (con excepciones para
+// /auth y /settings/{plan,business,upgrade}). GETs siempre pasan.
+router.use(blockIfTrialExpired);
 
 // Compras se montan ANTES de inventory para que /inventory/:id/purchase no
 // caiga en la ruta PUT /:id de inventory.

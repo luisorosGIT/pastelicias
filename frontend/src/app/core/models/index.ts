@@ -219,6 +219,12 @@ export interface PlanInfo {
 export interface PlanState extends PlanInfo {
   usage: PlanUsage;
   allPlans: PlanInfo[];
+  /** ISO date — cuándo termina la prueba gratis. null si ya está en plan pagado. */
+  trialEndsAt: string | null;
+  /** Días enteros que faltan para que termine el trial. 0 si expiró. */
+  trialDaysRemaining: number;
+  /** True si el plan es FREE y el trial ya pasó. */
+  trialExpired: boolean;
 }
 
 // ─── Carrito POS ──────────────────────────────────────────────────────────────

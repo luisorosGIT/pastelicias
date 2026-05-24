@@ -102,6 +102,49 @@ export class PlanLimitError extends Error {
   }
 }
 
+/** Error tipado: la prueba gratuita de 30 días expiró y el plan sigue siendo FREE. */
+export class TrialExpiredError extends Error {
+  constructor(public readonly trialEndsAt: Date) {
+    super(
+      `Tu prueba gratuita de 30 días terminó el ${trialEndsAt.toLocaleDateString('es-PE')}. ` +
+      `Mejora tu plan para seguir usando Pastelicias.`
+    );
+    this.name = 'TrialExpiredError';
+  }
+}
+
+// ─── Helpers de estado del trial ──────────────────────────────────────────────
+
+/** True si el plan es FREE y la fecha de trial ya pasó. */
+export function isTrialExpired(business: { plan: Plan; trialEndsAt: Date | null }): boolean {
+  if (business.plan !== 'FREE') return false;
+  if (!business.trialEndsAt) return false;
+  return business.trialEndsAt.getTime() <= Date.now();
+}
+
+/** Días enteros que faltan para que termine el trial. 0 si ya expiró o no aplica. */
+export function trialDaysRemaining(business: { plan: Plan; trialEndsAt: Date | null }): number {
+  if (business.plan !== 'FREE' || !business.trialEndsAt) return 0;
+  const msLeft = business.trialEndsAt.getTime() - Date.now();
+  if (msLeft <= 0) return 0;
+  return Math.ceil(msLeft / (24 * 60 * 60 * 1000));
+}
+
+/**
+ * Valida que el business pueda hacer un POST (= crear cosas nuevas).
+ * Bloquea si el trial FREE ya expiró. Llamar ANTES de assertWithinLimit.
+ */
+export async function assertTrialActive(businessId: string): Promise<void> {
+  const business = await prisma.business.findUnique({
+    where: { id: businessId },
+    select: { plan: true, trialEndsAt: true },
+  });
+  if (!business) throw new Error('Business no encontrado');
+  if (isTrialExpired(business)) {
+    throw new TrialExpiredError(business.trialEndsAt as Date);
+  }
+}
+
 /**
  * Verifica que el business pueda crear UN registro más del recurso especificado.
  * Lanza PlanLimitError si está en el tope.

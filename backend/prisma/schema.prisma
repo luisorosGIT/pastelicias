@@ -27,6 +27,10 @@ model Business {
   onboardingCompleted    Boolean  @default(false)
   // Plan de suscripción SaaS. Define los límites de recursos (ver config/plans.ts).
   plan                   Plan     @default(FREE)
+  // Fecha de expiración del periodo de prueba (30 días desde signup).
+  // null = sin trial pendiente (típicamente porque ya está en PRO/BUSINESS pagado).
+  // Cuando se cumple esta fecha y el plan sigue siendo FREE, se bloquean los POSTs.
+  trialEndsAt            DateTime?
   createdAt              DateTime @default(now())
 
   branches Branch[]

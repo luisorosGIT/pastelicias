@@ -39,13 +39,20 @@ export const authInterceptor: HttpInterceptorFn = (
         authService.forceLogout();
         router.navigate(['/auth/login']);
       } else if (err.status === 402) {
-        // Plan limit reached — mostrar snackbar con CTA al upgrade.
         const body = err.error as { error?: string; code?: string } | null;
         const message = body?.error ?? 'Has alcanzado el límite de tu plan';
-        const ref = snack.open(message, 'Mejorar plan', { duration: 8000 });
-        ref.onAction().subscribe(() => {
+        if (body?.code === 'TRIAL_EXPIRED') {
+          // Trial gratis terminó → redirigir directo al upgrade (más urgente
+          // que un snackbar que se ignora).
+          snack.open(message, 'OK', { duration: 6000 });
           router.navigate(['/app/upgrade']);
-        });
+        } else {
+          // Límite del plan alcanzado → snackbar con CTA al upgrade.
+          const ref = snack.open(message, 'Mejorar plan', { duration: 8000 });
+          ref.onAction().subscribe(() => {
+            router.navigate(['/app/upgrade']);
+          });
+        }
       }
       return throwError(() => err);
     })
