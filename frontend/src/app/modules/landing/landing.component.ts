@@ -22,6 +22,7 @@ import { homePathForRole } from '../../core/utils/home-path';
           <span>Pastelicias</span>
         </div>
         <div class="nav-actions">
+          <a routerLink="/pricing" class="nav-link">Planes</a>
           <a routerLink="/auth/login" class="nav-link">Iniciar sesión</a>
           <a routerLink="/auth/signup" mat-flat-button color="primary" class="nav-cta">
             Crear cuenta gratis

@@ -12,6 +12,17 @@ export const APP_ROUTES: Routes = [
       import('./modules/landing/landing.component').then((m) => m.LandingComponent),
   },
 
+  // ─── Pricing público ──────────────────────────────────────────────────────
+  // Página /pricing visible sin auth. Marketing comparativo de los planes.
+  // NO usa guestGuard porque también queremos que un usuario logueado pueda
+  // ver los planes (ej. llegó por un link compartido) — si está logueado y
+  // quiere cambiar de plan, el CTA lo llevará a /app/upgrade desde signup.
+  {
+    path: 'pricing',
+    loadComponent: () =>
+      import('./modules/pricing/pricing.component').then((m) => m.PricingComponent),
+  },
+
   // ─── Rutas de auth (login, signup) ────────────────────────────────────────
   {
     path: 'auth',
