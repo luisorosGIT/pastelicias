@@ -10,11 +10,23 @@ export interface AuthUser {
   branchId: string | null; // null para OWNER
 }
 
-// ─── Request extendido con usuario autenticado ────────────────────────────────
-export interface AuthRequest extends Request {
-  user: AuthUser;
-  branchId: string;    // inyectado por branch.middleware (resuelto)
+// ─── Module augmentation: agregar user/branchId al Request global de Express ──
+// Esto hace que AuthRequest sea compatible con RequestHandler de Express,
+// requerido por el strict-mode de tsc que usa Vercel al bundlear funciones.
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user: AuthUser;
+      branchId: string;
+    }
+  }
 }
+
+// ─── Request extendido con usuario autenticado ────────────────────────────────
+// AuthRequest ahora es alias directo de Request (que ya tiene user/branchId via
+// module augmentation). Mantenemos el nombre para no romper imports existentes.
+export type AuthRequest = Request;
 
 // ─── Respuesta estándar de la API ─────────────────────────────────────────────
 export interface ApiResponse<T = unknown> {
