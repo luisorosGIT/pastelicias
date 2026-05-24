@@ -1,0 +1,343 @@
+// ============================================================================
+//  PASTELICIAS ENTERPRISE — Sistema de diseño
+//  Paleta: Indigo profundo · Tipografía: Plus Jakarta Sans
+// ============================================================================
+
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Paleta indigo enterprise (#4648d4 primary)
+$pastelicias-primary: mat.define-palette((
+  50:  #eef0ff,
+  100: #d7daff,
+  200: #b0b5ff,
+  300: #888fff,
+  400: #6d72f5,
+  500: #4648d4,
+  600: #3f41c5,
+  700: #3132b1,
+  800: #25269c,
+  900: #181879,
+  A100: #d7daff,
+  A200: #b0b5ff,
+  A400: #6d72f5,
+  A700: #181879,
+  contrast: (
+    50: #1a1d3f, 100: #1a1d3f, 200: #1a1d3f, 300: #ffffff, 400: #ffffff,
+    500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
+    A100: #1a1d3f, A200: #1a1d3f, A400: #ffffff, A700: #ffffff,
+  ),
+), 500, 200, 700);
+
+$pastelicias-accent: mat.define-palette((
+  50:  #f3f1ff,
+  100: #e2dfff,
+  200: #c3c0ff,
+  300: #9c96ff,
+  400: #7e75ff,
+  500: #4b41e1,
+  600: #645efb,
+  700: #3323cc,
+  800: #2419a8,
+  900: #15107a,
+  A100: #e2dfff,
+  A200: #c3c0ff,
+  A400: #645efb,
+  A700: #3323cc,
+  contrast: (
+    50: #1a1d3f, 100: #1a1d3f, 200: #1a1d3f, 300: #ffffff, 400: #ffffff,
+    500: #ffffff, 600: #ffffff, 700: #ffffff, 800: #ffffff, 900: #ffffff,
+    A100: #1a1d3f, A200: #1a1d3f, A400: #ffffff, A700: #ffffff,
+  ),
+), 500, 200, 700);
+
+$pastelicias-warn: mat.define-palette(mat.$red-palette);
+
+$pastelicias-theme: mat.define-light-theme((
+  color: (
+    primary: $pastelicias-primary,
+    accent:  $pastelicias-accent,
+    warn:    $pastelicias-warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: '"Plus Jakarta Sans", system-ui, -apple-system, sans-serif',
+  ),
+  density: 0,
+));
+
+@include mat.all-component-themes($pastelicias-theme);
+
+// ─── Reset y base ──────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ─── Tokens de diseño ─────────────────────────────────────────────────────────
+:root {
+  // Material 3 Colors - Design System Tokens
+  --color-primary: #4648d4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #6063ee;
+  --color-on-primary-container: #fffbff;
+  --color-primary-fixed: #e1e0ff;
+  --color-on-primary-fixed: #07006c;
+  --color-primary-fixed-dim: #c0c1ff;
+  --color-on-primary-fixed-variant: #2f2ebe;
+
+  --color-secondary: #4b41e1;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #645efb;
+  --color-on-secondary-container: #fffbff;
+  --color-secondary-fixed: #e2dfff;
+  --color-on-secondary-fixed: #0f0069;
+  --color-secondary-fixed-dim: #c3c0ff;
+  --color-on-secondary-fixed-variant: #3323cc;
+
+  --color-tertiary: #5b5b65;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #74747e;
+  --color-on-tertiary-container: #fffbff;
+  --color-tertiary-fixed: #e3e1ed;
+  --color-on-tertiary-fixed: #1a1b23;
+  --color-tertiary-fixed-dim: #c7c5d1;
+  --color-on-tertiary-fixed-variant: #46464f;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-bg: #f8f9ff;
+  --color-on-background: #0b1c30;
+  
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #464554;
+  --color-outline: #767586;
+  --color-outline-variant: #c7c4d7;
+  
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-inverse-primary: #c0c1ff;
+
+  // Compatibilidad hacia atrás (alias)
+  --color-primary-hover: var(--color-primary-fixed-dim);
+  --color-primary-soft: var(--color-primary-fixed);
+  --color-text: var(--color-on-surface);
+  --color-text-secondary: var(--color-on-surface-variant);
+  --color-text-muted: var(--color-outline);
+  --color-text-inverse: var(--color-inverse-on-surface);
+  --color-border: var(--color-surface-container-highest);
+  --color-border-strong: var(--color-outline-variant);
+
+  // Estados (Success, Warning, Info) usando tokens de Material o similares si no existen
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --color-danger: var(--color-error);
+  --color-danger-soft: var(--color-error-container);
+  --color-info: #0284c7;
+  --color-info-soft: #dbeafe;
+
+  // Sombras (Material 3 inspired)
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-1: 0px 1px 3px rgba(11, 28, 48, 0.05), 0px 1px 2px rgba(11, 28, 48, 0.03);
+  --shadow-2: 0px 4px 12px rgba(11, 28, 48, 0.06), 0px 2px 6px rgba(11, 28, 48, 0.04);
+  --shadow-3: 0px 10px 25px -5px rgba(11, 28, 48, 0.1), 0px 4px 12px -2px rgba(11, 28, 48, 0.06);
+  --shadow-hover: 0px 8px 20px -4px rgba(70, 72, 212, 0.15);
+
+  // Radios
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  // Spacing rhythm
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  // Sidebar
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+}
+
+// ─── Utilidades globales ───────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.page-subtitle {
+  margin: var(--space-1) 0 0 0;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2);
+  padding: var(--space-5);
+  border: none;
+}
+
+// ─── Estilos de impresión (ticket POS) ────────────────────────────────────────
+@media print {
+  // No fijamos `size` aquí — dejamos que el usuario elija el tamaño de papel
+  // desde el diálogo de impresión (80mm térmico, A6, A4, etc.). El ticket
+  // se centra horizontalmente y mantiene ancho razonable en cualquier formato.
+  @page {
+    margin: 0;
+  }
+  html, body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body * {
+    visibility: hidden;
+    box-shadow: none !important;
+  }
+  .ticket-print,
+  .ticket-print * {
+    visibility: visible;
+  }
+  .ticket-print {
+    position: fixed !important;
+    top: 0;
+    // Centrado horizontal — funciona en 80mm, A6, A4, Letter...
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 80mm;
+    max-width: 80mm;
+    padding: 4mm 5mm !important;
+    margin: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+  .ticket-print h3 { font-size: 13px !important; margin: 0 0 4px 0 !important; }
+  .ticket-print p { margin: 2px 0 !important; }
+  .ticket-print .code,
+  .ticket-print table,
+  .ticket-print .ticket-totals { word-break: break-all; }
+  .no-print { display: none !important; }
+}
+
+// ─── Material overrides ───────────────────────────────────────────────────────
+.mat-mdc-form-field {
+  font-size: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+// Botones redondeados y colores consistentes
+.mat-mdc-raised-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-flat-button,
+.mat-mdc-button,
+.mat-mdc-stroked-button {
+  border-radius: var(--radius-sm) !important;
+  letter-spacing: 0 !important;
+  font-weight: 600 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.mat-mdc-flat-button.mat-primary,
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-unelevated-button.mat-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+}
+
+// Cards
+.mat-mdc-card { border-radius: var(--radius-lg) !important; border: none !important; box-shadow: var(--shadow-2) !important; }
+
+// Diálogos
+.mdc-dialog__surface {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-3) !important;
+}
+
+// Inputs con focus indigo
+.mat-mdc-form-field-focus-overlay { display: none; }
+
+// Tab inkbar
+.mat-mdc-tab-header { border-bottom: 1px solid var(--color-border); }
+.mat-mdc-tab .mdc-tab__text-label {
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+// Snackbar
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border-radius: var(--radius-sm) !important;
+}
+
+// Scrollbar
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+// Selección de texto
+::selection {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}

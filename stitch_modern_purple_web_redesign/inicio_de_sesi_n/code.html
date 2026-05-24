@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pastelicias - Sistema de Gestión</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#e1e0ff",
+                        "outline": "#767586",
+                        "on-surface-variant": "#464554",
+                        "on-tertiary-fixed": "#1a1b23",
+                        "inverse-primary": "#c0c1ff",
+                        "primary": "#4648d4",
+                        "on-secondary-fixed": "#0f0069",
+                        "surface-tint": "#494bd6",
+                        "primary-container": "#6063ee",
+                        "on-primary-fixed": "#07006c",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-surface": "#213145",
+                        "secondary-container": "#645efb",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#46464f",
+                        "secondary": "#4b41e1",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-fixed": "#e3e1ed",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c5d1",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-high": "#dce9ff",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#5b5b65",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#74747e",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c7c4d7",
+                        "on-primary-fixed-variant": "#2f2ebe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "2rem",
+                        "md": "1rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2rem",
+                        "xs": "0.25rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "base": "4px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background h-screen w-full flex items-center justify-center relative overflow-hidden">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-primary/85 z-10 mix-blend-multiply"></div>
+<img alt="Bakery Background" class="w-full h-full object-cover grayscale" data-alt="A high-end, professional commercial bakery kitchen showing stainless steel workbenches and modern industrial ovens. The image is captured with professional lighting, emphasizing cleanliness, precision, and operational efficiency. The overall aesthetic is dark and sophisticated, desaturated to allow the deep primary indigo brand color overlay to dominate and create a seamless, enterprise-grade login experience background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBn3nR4FoxwieKFMheHPC-HgU67xfnvaAgIoux7J_M2oAjgk_eFAXU0sEN1jW_t7nW4U_8D9HZBAraWjcDIKpl-XGmPiq2l2SQKseOwfzBMmQRf9gkj4ybHyLo4MgGIN8wM1KDUhIQO0ZayG-tT3Aj9mTHKGmEGVjPVa9gnjyZ0N6V8hI0VE0Qa5bbjP-n6pQa2iJhy2XfMoShCcpFz_IDbKcGQyuEDWLtz3vZlF1ytkeksbwWQvsd5jScCgaYpvJnGsfk6n1sFzFAL"/>
+</div>
+<!-- Login Card -->
+<div class="z-20 w-full max-w-[420px] bg-surface-container-lowest rounded-xl p-xl shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.2)] mx-margin-mobile md:mx-0 flex flex-col relative">
+<!-- Header / Logo -->
+<div class="flex flex-col items-center mb-lg text-center">
+<div class="w-16 h-16 bg-surface-container flex items-center justify-center rounded-lg mb-md">
+<span class="material-symbols-outlined text-[32px] text-primary" data-icon="bakery_dining" data-weight="fill" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Pastelicias</h1>
+<h2 class="font-title-md text-title-md text-on-surface-variant mt-xs">Sistema de Gestión</h2>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-md">
+<!-- Email Input -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface" for="email">Correo Electrónico</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]" data-icon="mail">mail</span>
+<input class="w-full h-11 pl-10 pr-3 border border-outline-variant rounded-lg bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md text-body-md text-on-surface placeholder:text-outline" id="email" placeholder="usuario@pastelicias.com" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-base">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface" for="password">Contraseña</label>
+<a class="font-label-md text-label-md text-primary hover:text-primary-container transition-colors" href="#">¿Olvidaste tu contraseña?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]" data-icon="lock">lock</span>
+<input class="w-full h-11 pl-10 pr-3 border border-outline-variant rounded-lg bg-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md text-body-md text-on-surface placeholder:text-outline" id="password" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="mt-sm w-full h-12 bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm active:scale-[0.98]" type="button">
+                Iniciar Sesión
+                <span class="material-symbols-outlined text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Note -->
+<p class="font-label-sm text-label-sm text-outline mt-xl text-center uppercase tracking-wider">
+            Uso Exclusivo Personal Autorizado
+        </p>
+</div>
+</body></html>

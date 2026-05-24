@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Negocio ──────────────────────────────────────────────────────────────────
+model Business {
+  id        String   @id @default(uuid())
+  name      String
+  ruc       String?
+  taxRate   Float    @default(18) // IGV configurable
+  createdAt DateTime @default(now())
+
+  branches Branch[]
+  users    User[]
+
+  @@map("businesses")
+}
+
+// ─── Sucursal ─────────────────────────────────────────────────────────────────
+model Branch {
+  id         String  @id @default(uuid())
+  businessId String
+  name       String
+  address    String?
+  phone      String?
+  isActive   Boolean @default(true)
+
+  business     Business      @relation(fields: [businessId], references: [id])
+  users        User[]
+  ingredients  Ingredient[]
+  recipes      Recipe[]
+  sales        Sale[]
+  reservations Reservation[]
+  productions  Production[]
+  wasteLogs    WasteLog[]
+
+  @@map("branches")
+}
+
+// ─── Usuario ──────────────────────────────────────────────────────────────────
+model User {
+  id         String  @id @default(uuid())
+  businessId String
+  branchId   String? // null = OWNER con acceso global
+  email      String  @unique
+  fullName   String
+  role       Role    @default(SELLER)
+  isActive   Boolean @default(true)
+
+  business Business @relation(fields: [businessId], references: [id])
+  branch   Branch?  @relation(fields: [branchId], references: [id])
+  sales    Sale[]
+
+  @@map("users")
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  SELLER
+  INVENTORY
+}
+
+// ─── Insumo / Ingrediente ─────────────────────────────────────────────────────
+model Ingredient {
+  id               String      @id @default(uuid())
+  branchId         String
+  name             String
+  unit             MeasureUnit
+  presentationSize Float       // tamaño de 1 presentación en unidad base
+  stock            Float       @default(0)
+  minStock         Float
+  unitCost         Float       // costo por unidad base
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  branch      Branch       @relation(fields: [branchId], references: [id])
+  recipeItems RecipeItem[]
+  wasteLogs   WasteLog[]
+
+  @@map("ingredients")
+}
+
+enum MeasureUnit {
+  KG
+  G
+  L
+  ML
+  UNIT
+}
+
+// ─── Receta ───────────────────────────────────────────────────────────────────
+model Recipe {
+  id          String         @id @default(uuid())
+  branchId    String
+  name        String
+  category    RecipeCategory
+  salePrice   Float
+  imageUrl    String?
+  description String?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  branch      Branch       @relation(fields: [branchId], references: [id])
+  items       RecipeItem[]
+  productions Production[]
+  saleItems   SaleItem[]
+  wasteLogs   WasteLog[]
+
+  @@map("recipes")
+}
+
+enum RecipeCategory {
+  PANADERIA
+  PASTELERIA
+  BEBIDAS
+  OTROS
+}
+
+// ─── Insumos de Receta (BOM) ──────────────────────────────────────────────────
+model RecipeItem {
+  id           String @id @default(uuid())
+  recipeId     String
+  ingredientId String
+  quantity     Float  // en unidad base del ingrediente
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([recipeId, ingredientId])
+  @@map("recipe_items")
+}
+
+// ─── Venta ────────────────────────────────────────────────────────────────────
+model Sale {
+  id             String        @id @default(uuid())
+  branchId       String
+  userId         String
+  type           SaleType      @default(SIMPLE)
+  paymentMethod  PaymentMethod
+  subtotal       Float
+  taxAmount      Float
+  total          Float
+  amountReceived Float?        // solo Venta Avanzada
+  change         Float?
+  ticketCode     String        @unique @default(uuid())
+  createdAt      DateTime      @default(now())
+
+  branch Branch     @relation(fields: [branchId], references: [id])
+  user   User       @relation(fields: [userId], references: [id])
+  items  SaleItem[]
+
+  @@map("sales")
+}
+
+enum SaleType {
+  SIMPLE
+  ADVANCED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  YAPE_PLIN
+}
+
+// ─── Ítem de Venta ────────────────────────────────────────────────────────────
+model SaleItem {
+  id        String @id @default(uuid())
+  saleId    String
+  recipeId  String
+  quantity  Int
+  unitPrice Float
+
+  sale   Sale   @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@map("sale_items")
+}
+
+// ─── Reservación ──────────────────────────────────────────────────────────────
+model Reservation {
+  id           String            @id @default(uuid())
+  branchId     String
+  clientName   String
+  phone        String
+  deliveryDate DateTime
+  details      String?
+  recipeId     String?
+  customProduct String?          // texto libre si no es receta registrada
+  totalPrice   Float
+  advance      Float             @default(0)
+  status       ReservationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  @@map("reservations")
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  IN_PROCESS
+  READY
+  DELIVERED
+}
+
+// ─── Producción ───────────────────────────────────────────────────────────────
+model Production {
+  id        String   @id @default(uuid())
+  branchId  String
+  recipeId  String
+  quantity  Int
+  notes     String?
+  createdAt DateTime @default(now())
+
+  branch Branch @relation(fields: [branchId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@map("productions")
+}
+
+// ─── Merma / Desperdicio ─────────────────────────────────────────────────────
+model WasteLog {
+  id           String      @id @default(uuid())
+  branchId     String
+  type         WasteType
+  ingredientId String?
+  recipeId     String?
+  quantity     Float
+  cost         Float
+  reason       WasteReason
+  notes        String?
+  createdAt    DateTime    @default(now())
+
+  branch     Branch      @relation(fields: [branchId], references: [id])
+  ingredient Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe     Recipe?     @relation(fields: [recipeId], references: [id])
+
+  @@map("waste_logs")
+}
+
+enum WasteType {
+  INGREDIENT
+  PRODUCT
+}
+
+enum WasteReason {
+  EXPIRY
+  PHYSICAL_DAMAGE
+  CONTAMINATION
+  LOST_BROKEN
+  SPILL
+  OTHER
+}

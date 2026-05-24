@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recetario - Pastelicias</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined', sans-serif;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#e1e0ff",
+                        "outline": "#767586",
+                        "on-surface-variant": "#464554",
+                        "on-tertiary-fixed": "#1a1b23",
+                        "inverse-primary": "#c0c1ff",
+                        "primary": "#4648d4",
+                        "on-secondary-fixed": "#0f0069",
+                        "surface-tint": "#494bd6",
+                        "primary-container": "#6063ee",
+                        "on-primary-fixed": "#07006c",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-surface": "#213145",
+                        "secondary-container": "#645efb",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#46464f",
+                        "secondary": "#4b41e1",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-fixed": "#e3e1ed",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c5d1",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-high": "#dce9ff",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#5b5b65",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#74747e",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c7c4d7",
+                        "on-primary-fixed-variant": "#2f2ebe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "2rem",
+                        "md": "1rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2rem",
+                        "xs": "0.25rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "base": "4px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "title-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+                        "title-md": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
+<!-- App Container -->
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 flex flex-col bg-surface dark:bg-on-surface-variant border-r border-outline-variant dark:border-outline shadow-sm z-50">
+<!-- Header -->
+<div class="px-gutter py-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">Pastelicias</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Administración</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 overflow-y-auto px-2 py-4 flex flex-col gap-1">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventario</span>
+</a>
+<!-- Active Nav Item -->
+<a class="bg-primary-fixed text-on-primary-fixed font-bold rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95 shadow-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-label-md text-label-md">Recetario</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-label-md text-label-md">POS</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Reservaciones</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-md text-label-md">Producción</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reportes</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configuración</span>
+</a>
+</nav>
+<!-- Footer -->
+<div class="p-4 mt-auto border-t border-outline-variant dark:border-outline">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high transition-colors duration-200 rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Salir</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<div class="flex-1 ml-[260px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter border-b border-outline-variant dark:border-outline">
+<div class="font-headline-sm text-headline-sm text-on-surface dark:text-on-surface-variant">Pastelicias</div>
+<div class="flex items-center gap-6">
+<button class="font-title-lg text-title-lg text-primary dark:text-primary-fixed font-bold hover:bg-surface-container-low transition-all px-3 py-1.5 rounded-md cursor-pointer active:opacity-80">
+                        Todas las sucursales
+                    </button>
+<div class="flex items-center gap-4 border-l border-outline-variant pl-6">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">help</button>
+<div class="w-9 h-9 rounded-full bg-primary-fixed border-2 border-surface overflow-hidden cursor-pointer hover:opacity-90 transition-opacity">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpAyIKUWiNG67wQfBkX__VWWAvXWGTXZLEqVQOji26q2Ls1xrjLqSu74Sht23hEPqPJkPyPrfyBzyKZlXqdkuOc1MHQale5EhRsA5wxzER1INfgq8neCwnHNzdWmy7CymmQvfHejBLMkoa6SohuioSLyOdcQVrY04xlH40SXLK23BPRPoJum-2cj8zCckSJMbAFXoXY0aapIqK_Lr_jeBJev8iMDe0PuSOhxqMgH92KkzCfeVHjfXGfsmwIkuPM_9C-Yu7rMuUrUhe"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-margin-desktop bg-background flex flex-col gap-xl">
+<!-- Page Header & Controls -->
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-1">Recetario</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Gestiona costos, márgenes y listas de materiales (BOM).</p>
+</div>
+<div class="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+<!-- Search -->
+<div class="relative flex-1 lg:flex-none min-w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 border border-outline-variant rounded-lg bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md text-on-surface shadow-sm placeholder:text-outline transition-all" placeholder="Buscar receta, ingrediente..." type="text"/>
+</div>
+<!-- Category Filters -->
+<div class="flex bg-surface p-1 rounded-lg border border-outline-variant shadow-sm h-[46px] items-center">
+<button class="px-4 py-1.5 rounded-md bg-surface-container-highest font-label-md text-label-md text-on-surface font-bold shadow-sm transition-colors">Todos</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant transition-colors">Pasteles</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant transition-colors">Panes</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-surface-container-low font-label-md text-label-md text-on-surface-variant transition-colors">Postres</button>
+</div>
+<!-- Primary Action -->
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-lg font-title-md text-title-md flex items-center gap-2 hover:bg-primary-container transition-colors shadow-sm ml-auto lg:ml-0 active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                            Nueva Receta
+                        </button>
+</div>
+</div>
+<!-- Recipe Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-outline-variant/40 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:border-primary/50 transition-all duration-300 group flex flex-col overflow-hidden">
+<div class="h-48 relative bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A professional, bright, light-mode food photography shot of a decadent chocolate layer cake on a minimalist white ceramic plate. The background is a clean, slightly blurred professional kitchen setting indicating a corporate or high-end bakery environment. Lighting is soft and natural, emphasizing the rich, dark textures of the chocolate fudge frosting without harsh shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC728ZoIoS8JkNfwsDNKJJWyupI4Xojp8L5HKoqG3XmaBOs_qFqI-fTqJHI62d5aQigJmqDrbD9moyLT3t4-A7qSLLHttOWztZ7opEu4rO3_9rSZEmjMvF_pUQzFN-6bOvdW4DERAyr3yDk48pVe4rCrOl-QC2NvumPvx8dT0iujXG0ALbVaD-RXjALXMkiNCdIAKH_FhQuInYZKyA2VmY3jzyvrHKk3Vxv9r-UgINhoSMAxO0E21HUaHIEI5_0WjLfKj9yevYoXqyE"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/95 backdrop-blur-md px-2.5 py-1.5 rounded-md shadow-sm flex items-center gap-1.5 border border-outline-variant/20">
+<span class="material-symbols-outlined text-[16px] text-tertiary">inventory_2</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">12 unid. producibles</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-5">
+<h3 class="font-title-lg text-title-lg text-on-surface line-clamp-1 mb-1">Torta de Chocolate Fudge</h3>
+<span class="inline-block px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Pastelería</span>
+</div>
+<div class="grid grid-cols-3 gap-0 mb-6 bg-surface rounded-lg border border-outline-variant/40 overflow-hidden">
+<div class="flex flex-col p-3 bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Costo</span>
+<span class="font-title-md text-title-md text-on-surface">$14.20</span>
+</div>
+<div class="flex flex-col p-3 bg-surface-container-lowest border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Precio</span>
+<span class="font-title-md text-title-md text-on-surface">$38.00</span>
+</div>
+<div class="flex flex-col p-3 bg-primary-fixed/20 border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider mb-1">Margen</span>
+<span class="font-title-md text-title-md text-primary font-bold">62.6%</span>
+</div>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<a class="font-label-md text-label-md text-primary hover:text-primary-container font-bold flex items-center gap-1.5 transition-colors group/link" href="#">
+                                    Ver BOM <span class="material-symbols-outlined text-[18px] group-hover/link:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<div class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-label-sm text-label-sm flex items-center gap-1.5 border border-[#C8E6C9]">
+<div class="w-1.5 h-1.5 rounded-full bg-[#2E7D32]"></div>
+                                    Stock Óptimo
+                                </div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-outline-variant/40 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:border-primary/50 transition-all duration-300 group flex flex-col overflow-hidden">
+<div class="h-48 relative bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A clean, light-mode studio photograph of freshly baked artisanal sourdough bread loaves resting on a stainless steel commercial cooling rack. The aesthetic is corporate minimalist, highlighting the texture of the bread crust against a sterile, bright professional bakery background with subtle cool-toned ambient light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdzcyAWFdbbte_PzX6weqgF2p-fhWj8663D4q62A3tWLjEyOMlAnVcPQT9zGyDWZiIri73YmpcKqchbYgc3CUXF5thuQGYeuNiCkk5xbj7xmlWBWFyXt6EfitYUds8m83d9UjVd3Rws6IVKGk2lsZ1NZc3TRabCyW5KrY7mTeDUpB19N0BQDz8APeaSYWcgghX2rKoTuNopPWoycCuB2IkOcR1tUaJwKcFncN_5OFcZGSFVSzJqNgXHQ2jM2HQwNWTJ9AA2ZaPNfuX"/>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/95 backdrop-blur-md px-2.5 py-1.5 rounded-md shadow-sm flex items-center gap-1.5 border border-outline-variant/20">
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold text-error">0 unid. producibles</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-5">
+<h3 class="font-title-lg text-title-lg text-on-surface line-clamp-1 mb-1">Pan Campesino Sourdough</h3>
+<span class="inline-block px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Panadería</span>
+</div>
+<div class="grid grid-cols-3 gap-0 mb-6 bg-surface rounded-lg border border-outline-variant/40 overflow-hidden">
+<div class="flex flex-col p-3 bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Costo</span>
+<span class="font-title-md text-title-md text-on-surface">$2.10</span>
+</div>
+<div class="flex flex-col p-3 bg-surface-container-lowest border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Precio</span>
+<span class="font-title-md text-title-md text-on-surface">$6.50</span>
+</div>
+<div class="flex flex-col p-3 bg-primary-fixed/20 border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider mb-1">Margen</span>
+<span class="font-title-md text-title-md text-primary font-bold">67.6%</span>
+</div>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<a class="font-label-md text-label-md text-primary hover:text-primary-container font-bold flex items-center gap-1.5 transition-colors group/link" href="#">
+                                    Ver BOM <span class="material-symbols-outlined text-[18px] group-hover/link:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<div class="px-3 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm flex items-center gap-1.5 border border-[#ffb4ab]">
+<div class="w-1.5 h-1.5 rounded-full bg-error"></div>
+                                    Falta Harina
+                                </div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-outline-variant/40 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] hover:border-primary/50 transition-all duration-300 group flex flex-col overflow-hidden">
+<div class="h-48 relative bg-surface-variant overflow-hidden flex items-center justify-center bg-surface-container">
+<span class="material-symbols-outlined text-[64px] text-tertiary-fixed-dim">cookie</span>
+<div class="absolute top-3 right-3 bg-surface-container-lowest/95 backdrop-blur-md px-2.5 py-1.5 rounded-md shadow-sm flex items-center gap-1.5 border border-outline-variant/20">
+<span class="material-symbols-outlined text-[16px] text-tertiary">inventory_2</span>
+<span class="font-label-sm text-label-sm text-on-surface font-bold">45 unid. producibles</span>
+</div>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-5">
+<h3 class="font-title-lg text-title-lg text-on-surface line-clamp-1 mb-1">Galletas Choco-Chips</h3>
+<span class="inline-block px-2 py-0.5 rounded-md bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Galletería</span>
+</div>
+<div class="grid grid-cols-3 gap-0 mb-6 bg-surface rounded-lg border border-outline-variant/40 overflow-hidden">
+<div class="flex flex-col p-3 bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Costo</span>
+<span class="font-title-md text-title-md text-on-surface">$0.45</span>
+</div>
+<div class="flex flex-col p-3 bg-surface-container-lowest border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Precio</span>
+<span class="font-title-md text-title-md text-on-surface">$1.50</span>
+</div>
+<div class="flex flex-col p-3 bg-primary-fixed/20 border-l border-outline-variant/40">
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider mb-1">Margen</span>
+<span class="font-title-md text-title-md text-primary font-bold">70.0%</span>
+</div>
+</div>
+<div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/30">
+<a class="font-label-md text-label-md text-primary hover:text-primary-container font-bold flex items-center gap-1.5 transition-colors group/link" href="#">
+                                    Ver BOM <span class="material-symbols-outlined text-[18px] group-hover/link:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<div class="px-3 py-1 rounded-full bg-[#FFF3E0] text-[#E65100] font-label-sm text-label-sm flex items-center gap-1.5 border border-[#FFE0B2]">
+<div class="w-1.5 h-1.5 rounded-full bg-[#F57C00]"></div>
+                                    Stock Bajo
+                                </div>
+</div>
+</div>
+</div>
+<!-- Add New Card Placeholder -->
+<div class="bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant hover:border-primary/50 hover:bg-surface-container transition-all duration-300 flex flex-col items-center justify-center p-6 cursor-pointer group min-h-[400px]">
+<div class="w-16 h-16 rounded-full bg-surface shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-primary-fixed transition-all">
+<span class="material-symbols-outlined text-[32px] text-primary">add</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-2">Crear Receta</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center max-w-[200px]">Añade un nuevo producto a tu catálogo con su fórmula detallada.</p>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

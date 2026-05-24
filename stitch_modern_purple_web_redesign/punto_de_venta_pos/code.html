@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pastelicias - POS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#e1e0ff",
+                      "outline": "#767586",
+                      "on-surface-variant": "#464554",
+                      "on-tertiary-fixed": "#1a1b23",
+                      "inverse-primary": "#c0c1ff",
+                      "primary": "#4648d4",
+                      "on-secondary-fixed": "#0f0069",
+                      "surface-tint": "#494bd6",
+                      "primary-container": "#6063ee",
+                      "on-primary-fixed": "#07006c",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "inverse-surface": "#213145",
+                      "secondary-container": "#645efb",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-tertiary-container": "#fffbff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#46464f",
+                      "secondary": "#4b41e1",
+                      "on-secondary-container": "#fffbff",
+                      "on-primary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "tertiary-fixed": "#e3e1ed",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c5d1",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-high": "#dce9ff",
+                      "surface-dim": "#cbdbf5",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface": "#f8f9ff",
+                      "tertiary": "#5b5b65",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#3323cc",
+                      "on-background": "#0b1c30",
+                      "tertiary-container": "#74747e",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "surface-container": "#e5eeff",
+                      "on-surface": "#0b1c30",
+                      "outline-variant": "#c7c4d7",
+                      "on-primary-fixed-variant": "#2f2ebe"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "2rem",
+                      "md": "1rem",
+                      "margin-mobile": "1rem",
+                      "margin-desktop": "2rem",
+                      "xs": "0.25rem",
+                      "lg": "1.5rem",
+                      "sm": "0.5rem",
+                      "base": "4px",
+                      "gutter": "1.5rem"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "title-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-sm": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "title-md": [
+                              "Plus Jakarta Sans"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "11px",
+                              {
+                                      "lineHeight": "14px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "title-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="w-[260px] h-screen fixed left-0 top-0 flex flex-col bg-surface dark:bg-on-surface-variant flex flex-col border-r border-outline-variant dark:border-outline z-50">
+<div class="p-lg flex flex-col items-center border-b border-outline-variant dark:border-outline">
+<div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mb-sm shadow-sm text-on-primary-container">
+<span class="material-symbols-outlined text-headline-lg">cake</span>
+</div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">Pastelicias</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Administración</p>
+</div>
+<div class="flex-1 overflow-y-auto py-md">
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventario</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recetario</span>
+</a>
+<!-- Active -->
+<a class="bg-primary-fixed text-on-primary-fixed font-bold rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95 shadow-sm" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">point_of_sale</span>
+<span class="font-label-md text-label-md">POS</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Reservaciones</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-md text-label-md">Producción</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reportes</span>
+</a>
+<!-- Inactive -->
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configuración</span>
+</a>
+</div>
+<div class="p-md border-t border-outline-variant dark:border-outline">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Salir</span>
+</a>
+</div>
+</nav>
+<!-- Main Layout Wrapper -->
+<div class="ml-[260px] flex-1 flex flex-col h-screen">
+<!-- TopAppBar -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-dim flex justify-between items-center px-gutter border-b border-outline-variant dark:border-outline shadow-sm">
+<div class="font-headline-sm text-headline-sm text-on-surface dark:text-on-surface-variant font-bold">Pastelicias</div>
+<div class="flex items-center gap-md">
+<button class="bg-primary-container text-on-primary-container hover:bg-secondary-container transition-all px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 cursor-pointer active:opacity-80">
+                    Todas las sucursales
+                    <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center text-on-surface-variant transition-all cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center text-on-surface-variant transition-all cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden ml-sm cursor-pointer border border-outline-variant">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a smiling woman with dark hair pulled back, wearing a neat white collared shirt. She is illuminated by bright, soft studio lighting against a clean, light grey background, evoking a sense of corporate professionalism and reliability suitable for an enterprise-grade bakery management system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2lJe0ruD9rss1Po2C0GWMqigKNVhRpLX5yl12WquwEL8Q6wYUbXG2EG0Q8rRZU2BK-fcUvFb2HxEE8s8pqPbThOC3w54Cp9TA3cZwWo4gOB0mNpCNZidzEHsxP5TZRX-Cq6UrvQd1i14t2Xm-tvORS93tQvDm29UwCrb6073t7Z_Ao4CH1rnfAPKiuGMgfQs3F3IhTnr0gCaSAKlaIzds8tRcAk6a_tdQy74ERSmFQ0_q3EIqVtNPWOeUYk_nKZaSh89hvZF1ra6U"/>
+</div>
+</div>
+</header>
+<!-- POS Canvas -->
+<main class="flex-1 flex overflow-hidden bg-background">
+<!-- Left Side: Products (Canvas) -->
+<section class="flex-1 flex flex-col px-margin-desktop py-lg overflow-y-auto">
+<!-- Search & Filters -->
+<div class="flex items-center justify-between gap-lg mb-lg">
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md shadow-sm" placeholder="Buscar productos..." type="text"/>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-1 no-scrollbar">
+<button class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap shadow-sm">Todos</button>
+<button class="px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-colors">Panadería</button>
+<button class="px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-colors">Pastelería</button>
+<button class="px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-colors">Bebidas</button>
+<button class="px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap transition-colors">Otros</button>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter pb-xl">
+<!-- Product Card 1 -->
+<div class="bg-surface rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-transparent hover:border-primary/20 hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-all cursor-pointer group flex flex-col overflow-hidden">
+<div class="h-32 w-full bg-surface-container-low relative overflow-hidden">
+<img alt="Torta de Chocolate" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A rich, decadent multi-layered chocolate cake resting on a pristine white ceramic plate. The cake is perfectly sliced, revealing moist dark sponge and glossy chocolate ganache filling. It is photographed from a slightly elevated angle under bright, high-key lighting in a clean, modern bakery setting, emphasizing high-quality culinary precision and a professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfAhH_qZ-APKn5wB3iKHDmbZfS_a3p9jAQ9p8nl29ovnVe0oF8cT9YL2nAymNgmNjC6xXsXzfdtVJR8L74P9-Y7a1alIUR7AC8ELCh9hWCnsYG1TusT3tfFTM-uyBw4JyPGiTOGeAs8zwf6bOMRS4lf_fIbl9kHzbsQc5S2U1NpWQQtmwuAd1UoSZGs72jmcRyB6PaRC3PRkHKFCl2PUFIpVsl8ELcQIAW4Ubd4JUAvXyRZZ3M7bULh_cQ7_PJtagdIk-qBR5xe5Lk"/>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-2 mb-1">Torta de Chocolate</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Pastelería</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">S/ 45.00</span>
+<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-medium">8 unid.</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-transparent hover:border-primary/20 hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-all cursor-pointer group flex flex-col overflow-hidden">
+<div class="h-32 w-full bg-surface-container-low relative overflow-hidden">
+<img alt="Croissant Frances" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Three perfectly baked, golden-brown croissants arranged neatly on a dark slate board. The flaky, buttery layers are highly visible, dusted with a light touch of powdered sugar. The scene is lit with crisp, modern studio lighting that highlights the texture against a clean, minimalist background, reflecting an enterprise-grade focus on product quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnQrhxg0hEgOgj4MzMOm_OaGxCDXTlF2GFYaDCXpsEVcDHKQbqD-Rk6_1Mqp9hdblDwgr5btJbUZkhKys2zlPc3OGc7QOpmOpezWMT9Vg7becLrJh1elHOgpd-LnNj1lS0X5vM0ILv6DKCoevT36GljsL61SbTbTUCvo7Pxh2kvQzosfd2YvxyMV2R7lcqHoNc4LUYuqLr4TpK5NThvKTMCa-bAcZCiTWXthZo80OIC_sQmcmFJOm8ZWg958pFJ7FoolbmWUa5c3vy"/>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-2 mb-1">Croissant Francés</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Panadería</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">S/ 6.50</span>
+<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-medium">24 unid.</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-transparent hover:border-primary/20 hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-all cursor-pointer group flex flex-col overflow-hidden">
+<div class="h-32 w-full bg-surface-container-low relative overflow-hidden">
+<img alt="Cheesecake Fresa" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A neat, circular strawberry cheesecake displayed on a minimalist silver cake stand. The cheesecake features a perfectly smooth cream cheese layer topped with a vibrant, glossy red strawberry glaze. Shot with sharp, bright professional lighting against a soft grey backdrop to create a clean, organized, and appetizing presentation typical of a premium bakery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKvEp_oyPScZQ35EQ0fsa3niDXD3e4ZtCEQwbgA7TVRqcJmgUiNifgaGWeZH-xxFE66sqdVVjb1yvdEr3Ks23yTsNOVKi-kMWjbb5vN1qEunCxjItn2rAafGX1l9whrft8zIBZKmAi5-ro3cMTtkJYNaK2KTxH34v_RALAMEyenKF_yotPvDwfUwNv6rBJxg8knkaT2SrxqXKNkghyxRvYgdUB9Wb9s2-_1t41mYtF_EXDQjUpdIsKyaaHRPqsG3PuyHLVTTD-bM_U"/>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-2 mb-1">Cheesecake Fresa</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Pastelería</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">S/ 55.00</span>
+<span class="text-xs bg-error-container text-on-error-container px-2 py-1 rounded-md font-medium">2 unid.</span>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-transparent hover:border-primary/20 hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-all cursor-pointer group flex flex-col overflow-hidden">
+<div class="h-32 w-full bg-surface-container-low relative overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant">local_cafe</span>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-2 mb-1">Café Americano</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Bebidas</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">S/ 8.00</span>
+<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-medium">-</span>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="bg-surface rounded-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-transparent hover:border-primary/20 hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-all cursor-pointer group flex flex-col overflow-hidden">
+<div class="h-32 w-full bg-surface-container-low relative overflow-hidden flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant">bakery_dining</span>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-2 mb-1">Pan Francés (kg)</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Panadería</p>
+</div>
+<div class="mt-3 flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">S/ 12.00</span>
+<span class="text-xs bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md font-medium">15 kg</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Order Summary Sidebar -->
+<aside class="w-[380px] bg-surface border-l border-outline-variant shadow-[-2px_0_10px_rgba(0,0,0,0.02)] flex flex-col h-full z-10">
+<!-- Header -->
+<div class="p-lg border-b border-outline-variant bg-surface-bright">
+<div class="flex justify-between items-center mb-2">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Orden Actual</h2>
+<span class="bg-primary-container text-on-primary-container text-xs px-2 py-1 rounded-md font-bold">#4092</span>
+</div>
+<div class="flex items-center gap-2 text-outline font-label-md">
+<span class="material-symbols-outlined text-[16px]">person</span>
+<span>Cliente: Público en General</span>
+<button class="ml-auto text-primary hover:text-primary-container transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+</div>
+</div>
+<!-- Cart Items List -->
+<div class="flex-1 overflow-y-auto p-md space-y-3">
+<!-- Cart Item 1 -->
+<div class="flex items-start gap-3 p-3 bg-background rounded-lg border border-outline-variant/50 hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded bg-surface-container-low overflow-hidden flex-shrink-0">
+<img alt="Torta de Chocolate Thumb" class="w-full h-full object-cover" data-alt="A small thumbnail image showing a slice of decadent chocolate cake with glossy icing on a white plate, cleanly lit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApOZt53WzOuKlJ32sbmBKP6kAD5II48BVCqYWN6l6Gxl4In98R3eHGvLGW2vP0b_ccLzvIuN5eWOXiyGjioAx2lHTV_OPS25kK_PG52HAijKBUNPMhKZA8tQremM6GttFv7RcfpEVulvjenRbCvJ62M3Ec3BRWV3KSW5NoG3Ucdp8eIqsOrfwwaLPH3Pmy0fjUo5rAt3x6iwcWj9h38VXtXWDCY6ER0MDHUbLqu4Cmq4WBAewLgL0BCxUz9diVlS2-xAoU4_Qi4ug9"/>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-title-md text-on-surface leading-tight mb-1">Torta de Chocolate</h4>
+<div class="font-label-sm text-outline">S/ 45.00 c/u</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="font-title-md text-title-md font-bold text-on-surface">S/ 90.00</div>
+<div class="flex items-center gap-2 bg-surface rounded-md border border-outline-variant px-1">
+<button class="text-outline hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="font-label-md font-bold w-4 text-center">2</span>
+<button class="text-outline hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+<!-- Cart Item 2 -->
+<div class="flex items-start gap-3 p-3 bg-background rounded-lg border border-outline-variant/50 hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded bg-surface-container-low overflow-hidden flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant">local_cafe</span>
+</div>
+<div class="flex-1">
+<h4 class="font-title-md text-title-md text-on-surface leading-tight mb-1">Café Americano</h4>
+<div class="font-label-sm text-outline">S/ 8.00 c/u</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="font-title-md text-title-md font-bold text-on-surface">S/ 8.00</div>
+<div class="flex items-center gap-2 bg-surface rounded-md border border-outline-variant px-1">
+<button class="text-outline hover:text-error transition-colors p-1"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="font-label-md font-bold w-4 text-center">1</span>
+<button class="text-outline hover:text-primary transition-colors p-1"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary & Payment Footer -->
+<div class="bg-surface-bright border-t border-outline-variant p-lg shadow-[0px_-4px_10px_rgba(0,0,0,0.02)]">
+<!-- Totals -->
+<div class="space-y-2 mb-lg">
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>Subtotal</span>
+<span>S/ 83.05</span>
+</div>
+<div class="flex justify-between font-body-md text-on-surface-variant">
+<span>IGV (18%)</span>
+<span>S/ 14.95</span>
+</div>
+<div class="flex justify-between font-headline-md text-headline-md font-bold text-on-surface pt-2 border-t border-outline-variant border-dashed">
+<span>Total</span>
+<span class="text-primary">S/ 98.00</span>
+</div>
+</div>
+<!-- Payment Methods -->
+<div class="mb-lg">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-2">Método de Pago</p>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2 px-1 border-2 border-primary bg-primary-fixed/20 rounded-lg flex flex-col items-center gap-1 transition-all">
+<span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+<span class="font-label-sm text-primary font-bold">Efectivo</span>
+</button>
+<button class="py-2 px-1 border border-outline-variant bg-surface rounded-lg flex flex-col items-center gap-1 hover:bg-surface-container-low transition-all text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">credit_card</span>
+<span class="font-label-sm">Tarjeta</span>
+</button>
+<button class="py-2 px-1 border border-outline-variant bg-surface rounded-lg flex flex-col items-center gap-1 hover:bg-surface-container-low transition-all text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+<span class="font-label-sm">Yape/Plin</span>
+</button>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary font-title-lg text-title-lg font-bold py-4 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">point_of_sale</span>
+                        Cobrar S/ 98.00
+                    </button>
+</div>
+</aside>
+</main>
+</div>
+</body></html>

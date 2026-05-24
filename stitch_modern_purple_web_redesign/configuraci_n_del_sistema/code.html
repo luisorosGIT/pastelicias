@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configuración - Pastelicias</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#e1e0ff",
+                      "outline": "#767586",
+                      "on-surface-variant": "#464554",
+                      "on-tertiary-fixed": "#1a1b23",
+                      "inverse-primary": "#c0c1ff",
+                      "primary": "#4648d4",
+                      "on-secondary-fixed": "#0f0069",
+                      "surface-tint": "#494bd6",
+                      "primary-container": "#6063ee",
+                      "on-primary-fixed": "#07006c",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "inverse-surface": "#213145",
+                      "secondary-container": "#645efb",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-tertiary-container": "#fffbff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#46464f",
+                      "secondary": "#4b41e1",
+                      "on-secondary-container": "#fffbff",
+                      "on-primary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "tertiary-fixed": "#e3e1ed",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c5d1",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-high": "#dce9ff",
+                      "surface-dim": "#cbdbf5",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface": "#f8f9ff",
+                      "tertiary": "#5b5b65",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#3323cc",
+                      "on-background": "#0b1c30",
+                      "tertiary-container": "#74747e",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "surface-container": "#e5eeff",
+                      "on-surface": "#0b1c30",
+                      "outline-variant": "#c7c4d7",
+                      "on-primary-fixed-variant": "#2f2ebe"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "2rem",
+                      "md": "1rem",
+                      "margin-mobile": "1rem",
+                      "margin-desktop": "2rem",
+                      "xs": "0.25rem",
+                      "lg": "1.5rem",
+                      "sm": "0.5rem",
+                      "base": "4px",
+                      "gutter": "1.5rem"
+              },
+              "fontFamily": {
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "title-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "title-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "600"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased flex">
+<!-- SideNavBar -->
+<nav class="w-[260px] h-screen fixed left-0 top-0 flex flex-col flex-col border-r border-outline-variant dark:border-outline bg-surface dark:bg-on-surface-variant shadow-sm z-50">
+<div class="px-6 py-8 flex flex-col gap-2">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">Pastelicias</h1>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Administración</span>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventario</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recetario</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-label-md text-label-md">POS</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Reservaciones</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-md text-label-md">Producción</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reportes</span>
+</a>
+<a class="bg-primary-fixed text-on-primary-fixed font-bold rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Configuración</span>
+</a>
+</div>
+<div class="mt-auto py-4 border-t border-outline-variant/30">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Salir</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 ml-[260px] min-h-screen flex flex-col bg-background">
+<!-- TopAppBar -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter border-b border-outline-variant dark:border-outline">
+<div class="flex-1">
+<!-- Search hidden as per JSON -->
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-container-low transition-all px-3 py-1.5 rounded-lg">
+<span class="font-label-md text-label-md text-on-surface-variant">Todas las sucursales</span>
+<span class="material-symbols-outlined text-outline text-sm">keyboard_arrow_down</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold cursor-pointer ml-2">
+                        P
+                    </div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-margin-desktop">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Configuración</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Gestiona los ajustes generales de la plataforma y accesos.</p>
+</div>
+<button class="bg-primary text-on-primary hover:bg-secondary-container transition-colors duration-200 px-6 py-2.5 rounded-lg font-label-md text-label-md flex items-center gap-2 shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                    Invitar Usuario
+                </button>
+</div>
+<!-- Tabs -->
+<div class="border-b border-outline-variant/50 mb-6 flex gap-8">
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface pb-3 px-1 transition-colors border-b-2 border-transparent" href="#">Sucursales</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface pb-3 px-1 transition-colors border-b-2 border-transparent" href="#">Empresa</a>
+<a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface pb-3 px-1 transition-colors border-b-2 border-transparent" href="#">Perfil de Permisos</a>
+<a class="font-title-md text-title-md text-primary pb-3 px-1 border-b-2 border-primary" href="#">Usuarios</a>
+</div>
+<!-- Actions Bar (Search/Filter) -->
+<div class="flex justify-between items-center mb-4">
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-on-surface placeholder:text-outline-variant font-body-md text-body-md" placeholder="Buscar por nombre o correo..." type="text"/>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant/60 rounded-lg bg-surface text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Filtros
+                    </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/30">
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider w-[25%]">Nombre</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider w-[25%]">Correo Electrónico</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider w-[15%]">Rol</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider w-[15%]">Sucursal</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider w-[10%]">Estado</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right w-[10%]">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">AL</div>
+<span class="font-label-md text-label-md text-on-surface">Ana López</span>
+</div>
+</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">ana.lopez@pastelicias.com</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface">Administrador</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">Todas</td>
+<td class="px-6 py-3">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-primary border border-primary/20">Activo</span>
+</td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-outline hover:text-primary transition-colors rounded-md hover:bg-surface-container-high" title="Editar">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 text-outline hover:text-error transition-colors rounded-md hover:bg-error-container" title="Eliminar">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-dim text-on-surface flex items-center justify-center font-bold text-xs">CM</div>
+<span class="font-label-md text-label-md text-on-surface">Carlos Martínez</span>
+</div>
+</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">carlos.m@pastelicias.com</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface">Gerente de Tienda</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">Centro Histórico</td>
+<td class="px-6 py-3">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-primary border border-primary/20">Activo</span>
+</td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-outline hover:text-primary transition-colors rounded-md hover:bg-surface-container-high" title="Editar">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 text-outline hover:text-error transition-colors rounded-md hover:bg-error-container" title="Eliminar">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-dim text-on-surface flex items-center justify-center font-bold text-xs">LG</div>
+<span class="font-label-md text-label-md text-on-surface">Laura Gómez</span>
+</div>
+</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">laura.g@pastelicias.com</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface">Cajero</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">Plaza Norte</td>
+<td class="px-6 py-3">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-on-surface-variant">Inactivo</span>
+</td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-outline hover:text-primary transition-colors rounded-md hover:bg-surface-container-high" title="Editar">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 text-outline hover:text-error transition-colors rounded-md hover:bg-error-container" title="Eliminar">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-dim text-on-surface flex items-center justify-center font-bold text-xs">RD</div>
+<span class="font-label-md text-label-md text-on-surface">Roberto Díaz</span>
+</div>
+</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">roberto.d@pastelicias.com</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface">Jefe de Producción</td>
+<td class="px-6 py-3 font-body-md text-body-md text-on-surface-variant">Cocina Central</td>
+<td class="px-6 py-3">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-primary border border-primary/20">Activo</span>
+</td>
+<td class="px-6 py-3 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-outline hover:text-primary transition-colors rounded-md hover:bg-surface-container-high" title="Editar">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 text-outline hover:text-error transition-colors rounded-md hover:bg-error-container" title="Eliminar">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="bg-surface border-t border-outline-variant/30 px-6 py-3 flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Mostrando 1 a 4 de 12 usuarios</span>
+<div class="flex items-center gap-2">
+<button class="p-1 text-outline-variant hover:text-primary transition-colors" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-md bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md">1</button>
+<button class="w-8 h-8 rounded-md hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md transition-colors">2</button>
+<button class="w-8 h-8 rounded-md hover:bg-surface-container-high text-on-surface-variant flex items-center justify-center font-label-md text-label-md transition-colors">3</button>
+<button class="p-1 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

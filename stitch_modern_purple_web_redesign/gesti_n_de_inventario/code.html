@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventario - Pastelicias</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#e1e0ff",
+                      "outline": "#767586",
+                      "on-surface-variant": "#464554",
+                      "on-tertiary-fixed": "#1a1b23",
+                      "inverse-primary": "#c0c1ff",
+                      "primary": "#4648d4",
+                      "on-secondary-fixed": "#0f0069",
+                      "surface-tint": "#494bd6",
+                      "primary-container": "#6063ee",
+                      "on-primary-fixed": "#07006c",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "inverse-surface": "#213145",
+                      "secondary-container": "#645efb",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-tertiary-container": "#fffbff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#46464f",
+                      "secondary": "#4b41e1",
+                      "on-secondary-container": "#fffbff",
+                      "on-primary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "tertiary-fixed": "#e3e1ed",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c5d1",
+                      "error": "#ba1a1a",
+                      "on-primary-container": "#fffbff",
+                      "surface-container-high": "#dce9ff",
+                      "surface-dim": "#cbdbf5",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface": "#f8f9ff",
+                      "tertiary": "#5b5b65",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#3323cc",
+                      "on-background": "#0b1c30",
+                      "tertiary-container": "#74747e",
+                      "surface-variant": "#d3e4fe",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#f8f9ff",
+                      "surface-container": "#e5eeff",
+                      "on-surface": "#0b1c30",
+                      "outline-variant": "#c7c4d7",
+                      "on-primary-fixed-variant": "#2f2ebe"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "2rem",
+                      "md": "1rem",
+                      "margin-mobile": "1rem",
+                      "margin-desktop": "2rem",
+                      "xs": "0.25rem",
+                      "lg": "1.5rem",
+                      "sm": "0.5rem",
+                      "base": "4px",
+                      "gutter": "1.5rem"
+              },
+              "fontFamily": {
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "title-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "title-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                      "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                      "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                      "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "title-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                      "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }],
+                      "title-md": ["16px", { "lineHeight": "24px", "fontWeight": "600" }]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 flex flex-col bg-surface dark:bg-on-surface-variant border-r border-outline-variant dark:border-outline shadow-sm z-50">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-bold">P</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">Pastelicias</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Administración</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-1">
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<li>
+<!-- Active State -->
+<a class="bg-primary-fixed text-on-primary-fixed font-bold rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Inventario</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-label-md text-label-md">Recetario</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="font-label-md text-label-md">POS</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Reservaciones</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-label-md text-label-md">Producción</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reportes</span>
+</a>
+</li>
+<li>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Configuración</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="p-4 border-t border-outline-variant dark:border-outline">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg px-4 py-3 flex items-center gap-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Salir</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 ml-[260px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4 hidden">
+<!-- Search bar hidden as per JSON -->
+</div>
+<div class="flex items-center justify-end w-full gap-4">
+<div class="text-on-surface-variant font-label-md text-label-md flex items-center gap-2 mr-4">
+<span class="material-symbols-outlined text-[18px]">storefront</span>
+                    Todas las sucursales
+                </div>
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant ml-2">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A small circular user profile avatar placeholder image with a solid background and the letter A. The style is modern, minimal, and suitable for an enterprise dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_eo_A9V3Z8PclopSJu-vjFEIWah-3d8ZNAccBmO-2NvfImPB5264rEeqStn2p1FJib_tx6jcp9iZC6edUcH3XlZRpeNKWAMXtjd55X7tJTc6mQXzsLT7WkbAYFNjb12AeHm2LBituUgNvKmEsuhHwhw4TqVyhHlN0wahAwpTbqHwL2ApKkplP_amF5CiHt7xzizadjc1SypUhKuYchFmXy2F8zs_twxpD1zLhVh6cmyMWQTHTRZxj2JGIgwPoPP4yL1bMb4EaljfT"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-margin-desktop bg-surface-container-lowest">
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Inventario</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Gestión general de insumos y existencias.</p>
+</div>
+<button class="bg-primary text-on-primary hover:bg-surface-tint font-title-md text-title-md px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-sm transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                    Agregar Insumo
+                </button>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col justify-between hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Valor Total</p>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">$142,500.00</h3>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-error-container/50 flex flex-col justify-between hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-shadow relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-error-container rounded-bl-full opacity-20 -z-10"></div>
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Insumos Críticos</p>
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+</div>
+<div class="flex items-end gap-3">
+<h3 class="font-headline-md text-headline-md text-error">12</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">por debajo del mínimo</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_1px_3px_rgba(0,0,0,0.05)] border border-outline-variant/30 flex flex-col justify-between hover:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Insumos</p>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">category</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">348</h3>
+</div>
+</div>
+<!-- Toolbar (Search & Filter) -->
+<div class="bg-surface-container-lowest rounded-t-xl border border-outline-variant/30 border-b-0 p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface rounded-lg border border-outline-variant text-body-md font-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Buscar por nombre o código..." type="text"/>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filtros
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-on-surface hover:bg-surface-container-low transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Exportar
+                    </button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-b-xl shadow-[0px_1px_3px_rgba(0,0,0,0.05)] overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant/50">
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Nombre</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Sucursal</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Presentación</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Stock Actual</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Stock Min.</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Costo Uni.</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider">Valor Total</th>
+<th class="py-4 px-6 font-label-sm text-label-sm uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="py-3 px-6">
+<p class="font-title-md text-title-md text-on-surface">Harina de Trigo Selecta</p>
+<p class="font-label-md text-label-md text-on-surface-variant">INS-001</p>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Matriz Sur</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Bulto 44kg</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">
+                                    45
+                                </span>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface-variant">20</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">$540.00</td>
+<td class="py-3 px-6 font-title-md text-title-md text-on-surface">$24,300.00</td>
+<td class="py-3 px-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-tertiary hover:text-primary transition-colors p-1" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-tertiary hover:text-error transition-colors p-1" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 (Critical) -->
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="py-3 px-6">
+<p class="font-title-md text-title-md text-on-surface">Mantequilla sin sal</p>
+<p class="font-label-md text-label-md text-on-surface-variant">INS-045</p>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Centro Histórico</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Caja 20kg</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-error-container text-on-error-container">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                    2
+                                </span>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface-variant">5</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">$1,850.00</td>
+<td class="py-3 px-6 font-title-md text-title-md text-on-surface">$3,700.00</td>
+<td class="py-3 px-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-tertiary hover:text-primary transition-colors p-1" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-tertiary hover:text-error transition-colors p-1" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-inverse-on-surface/50 transition-colors h-[56px] group">
+<td class="py-3 px-6">
+<p class="font-title-md text-title-md text-on-surface">Azúcar Refinada</p>
+<p class="font-label-md text-label-md text-on-surface-variant">INS-012</p>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Matriz Sur</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">Bulto 50kg</td>
+<td class="py-3 px-6">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">
+                                    30
+                                </span>
+</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface-variant">15</td>
+<td class="py-3 px-6 font-body-md text-body-md text-on-surface">$1,100.00</td>
+<td class="py-3 px-6 font-title-md text-title-md text-on-surface">$33,000.00</td>
+<td class="py-3 px-6 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-tertiary hover:text-primary transition-colors p-1" title="Editar">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="text-tertiary hover:text-error transition-colors p-1" title="Eliminar">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 border-t border-outline-variant/30 flex items-center justify-between">
+<p class="font-body-md text-body-md text-on-surface-variant">Mostrando 1 a 3 de 348 insumos</p>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded text-on-surface-variant hover:bg-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant rounded text-on-surface-variant hover:bg-surface">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

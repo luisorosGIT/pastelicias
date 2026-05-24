@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pastelicias - Reservaciones</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#e1e0ff",
+                        "outline": "#767586",
+                        "on-surface-variant": "#464554",
+                        "on-tertiary-fixed": "#1a1b23",
+                        "inverse-primary": "#c0c1ff",
+                        "primary": "#4648d4",
+                        "on-secondary-fixed": "#0f0069",
+                        "surface-tint": "#494bd6",
+                        "primary-container": "#6063ee",
+                        "on-primary-fixed": "#07006c",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "inverse-surface": "#213145",
+                        "secondary-container": "#645efb",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#46464f",
+                        "secondary": "#4b41e1",
+                        "on-secondary-container": "#fffbff",
+                        "on-primary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "tertiary-fixed": "#e3e1ed",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c5d1",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-high": "#dce9ff",
+                        "surface-dim": "#cbdbf5",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "surface": "#f8f9ff",
+                        "tertiary": "#5b5b65",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "on-background": "#0b1c30",
+                        "tertiary-container": "#74747e",
+                        "surface-variant": "#d3e4fe",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "surface-container": "#e5eeff",
+                        "on-surface": "#0b1c30",
+                        "outline-variant": "#c7c4d7",
+                        "on-primary-fixed-variant": "#2f2ebe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "2rem",
+                        "md": "1rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2rem",
+                        "xs": "0.25rem",
+                        "lg": "1.5rem",
+                        "sm": "0.5rem",
+                        "base": "4px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "title-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "title-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "600"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for Kanban */
+        .kanban-scroll::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .kanban-scroll::-webkit-scrollbar-track {
+            background: theme('colors.surface-container'); 
+            border-radius: 4px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb {
+            background: theme('colors.outline-variant'); 
+            border-radius: 4px;
+        }
+        .kanban-scroll::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline'); 
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar (Shared Component) -->
+<nav class="w-[260px] h-screen fixed left-0 top-0 flex flex-col bg-surface dark:bg-on-surface-variant flex flex-col border-r border-outline-variant dark:border-outline shadow-sm z-50">
+<!-- Header -->
+<div class="px-6 py-8 flex flex-col items-start gap-2 border-b border-outline-variant/50">
+<div class="w-12 h-12 bg-primary-container rounded-xl flex items-center justify-center text-on-primary-container font-headline-md shadow-sm">
+                P
+            </div>
+<div class="mt-2">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">Pastelicias</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Administración</p>
+</div>
+</div>
+<!-- Main Navigation -->
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                Inventario
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                Recetario
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+                POS
+            </a>
+<!-- ACTIVE TAB -->
+<a class="bg-primary-fixed text-on-primary-fixed font-bold rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 scale-98 transition-transform active:scale-95 font-label-md text-label-md shadow-[0_1px_2px_rgba(0,0,0,0.05)]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_available</span>
+                Reservaciones
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">factory</span>
+                Producción
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                Reportes
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 scale-98 transition-transform active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Configuración
+            </a>
+</div>
+<!-- Footer -->
+<div class="p-4 border-t border-outline-variant/50">
+<a class="text-on-surface-variant dark:text-surface-variant hover:bg-error-container hover:text-on-error-container rounded-lg mx-2 my-1 px-4 py-3 flex items-center gap-3 transition-colors duration-200 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Salir
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-[260px] flex-1 flex flex-col min-h-screen">
+<!-- TopAppBar (Shared Component) -->
+<header class="h-16 w-full sticky top-0 z-40 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-gutter border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-4">
+<h1 class="font-headline-sm text-headline-sm text-on-surface dark:text-on-surface-variant hidden md:block">Pastelicias</h1>
+</div>
+<div class="flex items-center gap-6">
+<!-- Trailing Primary Action -->
+<button class="font-label-md text-label-md text-primary flex items-center gap-2 hover:bg-surface-container-low transition-all px-3 py-1.5 rounded-md cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined text-[18px]">storefront</span>
+                    Todas las sucursales
+                    <span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<!-- Icon Actions -->
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-all cursor-pointer active:opacity-80 flex items-center justify-center relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-all cursor-pointer active:opacity-80 flex items-center justify-center">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<!-- Profile -->
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-title-md cursor-pointer border border-outline-variant/30">
+                    A
+                </div>
+</div>
+</header>
+<!-- Page Canvas -->
+<main class="flex-1 flex flex-col p-margin-desktop overflow-hidden h-[calc(100vh-64px)]">
+<!-- Page Header & Actions -->
+<div class="flex justify-between items-end mb-6 shrink-0">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Reservaciones</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Gestiona los pedidos programados y su estado de producción.</p>
+</div>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-title-md text-title-md px-5 py-2.5 rounded-lg flex items-center gap-2 shadow-[0_1px_3px_rgba(0,0,0,0.1)] transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                    Nueva Reservación
+                </button>
+</div>
+<!-- Kanban Board Container -->
+<div class="flex-1 flex gap-gutter overflow-x-auto kanban-scroll pb-4">
+<!-- Column: PENDIENTE -->
+<div class="w-[320px] shrink-0 flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl overflow-hidden shadow-sm h-full">
+<div class="p-4 border-b border-outline-variant/30 bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">PENDIENTE</h3>
+<span class="bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-md text-label-md">3</span>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3 bg-surface-container-low/30 kanban-scroll">
+<!-- Card 1 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all group flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">Carlos Mendoza</span>
+<button class="text-tertiary hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                Pastel 3 Leches con Durazno (Mediano)
+                            </div>
+<div class="flex items-center gap-2 text-tertiary font-label-md text-label-md bg-surface-container-highest/50 px-2.5 py-1.5 rounded-md w-fit">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                                Mañana, 10:00 AM
+                            </div>
+<button class="mt-2 w-full text-center py-2 rounded-md font-label-md text-label-md text-primary border border-primary/20 hover:bg-primary-fixed hover:border-primary/40 transition-colors">
+                                Mover a Confirmada
+                            </button>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all group flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">Ana Silva</span>
+<button class="text-tertiary hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                Caja 12 Cupcakes Surtidos (Personalizados)
+                            </div>
+<div class="flex items-center gap-2 text-error font-label-md text-label-md bg-error-container/30 px-2.5 py-1.5 rounded-md w-fit">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                                Hoy, 18:00 PM
+                            </div>
+<button class="mt-2 w-full text-center py-2 rounded-md font-label-md text-label-md text-primary border border-primary/20 hover:bg-primary-fixed hover:border-primary/40 transition-colors">
+                                Mover a Confirmada
+                            </button>
+</div>
+</div>
+</div>
+<!-- Column: CONFIRMADA -->
+<div class="w-[320px] shrink-0 flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl overflow-hidden shadow-sm h-full">
+<div class="p-4 border-b border-outline-variant/30 bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">CONFIRMADA</h3>
+<span class="bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-md text-label-md">1</span>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3 bg-surface-container-low/30 kanban-scroll">
+<!-- Card 3 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all group flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">Roberto Gomez</span>
+<button class="text-tertiary hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                Tarta de Fresa (Grande) - Anticipo 50% Pagado
+                            </div>
+<div class="flex items-center gap-2 text-tertiary font-label-md text-label-md bg-surface-container-highest/50 px-2.5 py-1.5 rounded-md w-fit">
+<span class="material-symbols-outlined text-[16px]">event</span>
+                                25 Oct, 12:00 PM
+                            </div>
+<button class="mt-2 w-full text-center py-2 rounded-md font-label-md text-label-md text-secondary border border-secondary/20 hover:bg-secondary-fixed hover:border-secondary/40 transition-colors">
+                                Iniciar Producción
+                            </button>
+</div>
+</div>
+</div>
+<!-- Column: EN PROCESO -->
+<div class="w-[320px] shrink-0 flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl overflow-hidden shadow-sm h-full">
+<div class="p-4 border-b border-outline-variant/30 bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">EN PROCESO</h3>
+<span class="bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-md text-label-md">2</span>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3 bg-surface-container-low/30 kanban-scroll">
+<!-- Card 4 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all group flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">Familia Martinez</span>
+<button class="text-tertiary hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                Pastel Fondant Boda 3 Pisos (Diseño Especial)
+                            </div>
+<div class="flex items-center gap-2 text-primary font-label-md text-label-md bg-primary-fixed/50 px-2.5 py-1.5 rounded-md w-fit">
+<span class="material-symbols-outlined text-[16px]">bakery_dining</span>
+                                En Horneado
+                            </div>
+<button class="mt-2 w-full text-center py-2 rounded-md font-label-md text-label-md text-on-surface-variant bg-surface-container-highest hover:bg-outline-variant/30 transition-colors border border-transparent">
+                                Marcar como Listo
+                            </button>
+</div>
+</div>
+</div>
+<!-- Column: LISTO -->
+<div class="w-[320px] shrink-0 flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl overflow-hidden shadow-sm h-full">
+<div class="p-4 border-b border-outline-variant/30 bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">LISTO</h3>
+<span class="bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-md text-label-md">1</span>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3 bg-surface-container-low/30 kanban-scroll">
+<!-- Card 5 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_10px_-2px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all group flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface">Laura Jimenez</span>
+<button class="text-tertiary hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                                Cheesecake Zarzamora (Chico)
+                            </div>
+<div class="flex items-center gap-2 text-[#006874] font-label-md text-label-md bg-[#d0f8ff] px-2.5 py-1.5 rounded-md w-fit"> <!-- Using direct colors for semantic success state within constraints -->
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+                                En Mostrador
+                            </div>
+<button class="mt-2 w-full text-center py-2 rounded-md font-label-md text-label-md text-primary bg-primary-fixed hover:bg-primary-container hover:text-on-primary-container transition-colors border border-transparent">
+                                Registrar Entrega
+                            </button>
+</div>
+</div>
+</div>
+<!-- Column: ENTREGADO -->
+<div class="w-[320px] shrink-0 flex flex-col bg-surface-container-lowest border border-outline-variant/40 rounded-xl overflow-hidden shadow-sm h-full opacity-70">
+<div class="p-4 border-b border-outline-variant/30 bg-surface flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">ENTREGADO</h3>
+<span class="bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-label-md text-label-md">2</span>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3 bg-surface-container-low/30 kanban-scroll">
+<!-- Card 6 -->
+<div class="bg-surface p-4 rounded-lg border border-outline-variant/30 shadow-none flex flex-col gap-3 grayscale-[0.2]">
+<div class="flex justify-between items-start">
+<span class="font-title-md text-title-md text-on-surface-variant line-through decoration-outline-variant">Pedro Pascal</span>
+</div>
+<div class="font-body-md text-body-md text-outline">
+                                Pan Muerto Tradicional x5
+                            </div>
+<div class="flex items-center gap-2 text-outline font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                Entregado 10:15 AM
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
