@@ -1,167 +1,158 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth.service';
 
 /**
- * Signup público: crea un nuevo tenant (Business + Sucursal + Owner) en una sola
- * llamada al backend. Tras crear, hace login automático y redirige a /onboarding.
+ * SignUp adaptado al diseño Figma.
+ * Split layout INVERTIDO respecto a login: panel visual a la izquierda con
+ * título + benefits card + avatars, form a la derecha.
  *
- * Layout split: izquierda con beneficios visuales (lo que se llevan al
- * crear cuenta), derecha con el form.
+ * Crea un nuevo tenant (Business + Sucursal + Owner) en una sola llamada al
+ * backend. Tras crear, hace login automático y redirige a /onboarding.
  */
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [
     ReactiveFormsModule, RouterLink,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
     MatIconModule, MatProgressSpinnerModule,
   ],
   template: `
-    <div class="signup-page">
-      <!-- ─── Panel izquierdo: beneficios ─── -->
-      <aside class="benefits-panel">
-        <a routerLink="/" class="brand-link">
-          <div class="brand-logo">P</div>
-          <strong>Pastelicias</strong>
-        </a>
+    <div class="signup">
+      <!-- ─── Visual (izq) ─── -->
+      <aside class="visual-side fade-left">
+        <div class="visual-pattern"></div>
+        <div class="visual-content">
+          <div class="visual-header">
+            <h2>Empieza gratis hoy</h2>
+            <p>Únete a cientos de pastelerías que ya confían en Pastelicias.</p>
+          </div>
 
-        <div class="benefits-content">
-          <span class="benefits-tag">CREA TU CUENTA</span>
-          <h2>Empieza a vender, organizar y crecer hoy mismo.</h2>
-          <p class="benefits-sub">
-            En menos de 2 minutos tendrás tu pastelería online, con POS,
-            inventario y reportes funcionando.
-          </p>
-
-          <ul class="benefits-list">
-            <li>
-              <div class="benefit-icon"><mat-icon>schedule</mat-icon></div>
-              <div>
-                <strong>30 días gratis</strong>
-                <span>Sin tarjeta. Sin cobros. Sin trampa.</span>
-              </div>
-            </li>
-            <li>
-              <div class="benefit-icon"><mat-icon>flash_on</mat-icon></div>
-              <div>
-                <strong>Setup en 2 minutos</strong>
-                <span>Wizard de 3 pasos. Empieza vendiendo el mismo día.</span>
-              </div>
-            </li>
-            <li>
-              <div class="benefit-icon"><mat-icon>support_agent</mat-icon></div>
-              <div>
-                <strong>Te acompañamos</strong>
-                <span>Email y chat con humanos peruanos. Sin esperas.</span>
-              </div>
-            </li>
-            <li>
-              <div class="benefit-icon"><mat-icon>cancel</mat-icon></div>
-              <div>
-                <strong>Cancela cuando quieras</strong>
-                <span>Sin contratos. Si no te sirve, no sigues.</span>
-              </div>
-            </li>
-          </ul>
-
-          <div class="benefits-trust">
-            <div class="trust-avatars">
-              <div class="trust-avatar" style="background: linear-gradient(135deg, #4648d4, #645efb)">MQ</div>
-              <div class="trust-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444)">CM</div>
-              <div class="trust-avatar" style="background: linear-gradient(135deg, #10b981, #059669)">LV</div>
-              <div class="trust-avatar more">+120</div>
+          <div class="benefits-card">
+            <div class="benefits-image-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=720&q=70"
+                alt="Manos preparando masa"
+                loading="lazy"
+              />
             </div>
-            <p>Únete a las pastelerías que ya cambiaron Excel por Pastelicias.</p>
+            <div class="benefits-list">
+              @for (b of benefits; track b) {
+                <div class="benefit">
+                  <div class="benefit-check">
+                    <mat-icon>check</mat-icon>
+                  </div>
+                  <span>{{ b }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="social-proof">
+            <div class="avatars">
+              @for (a of avatars; track $index) {
+                <div class="avatar"></div>
+              }
+            </div>
+            <p><strong>500+ pastelerías</strong> ya están usando Pastelicias.</p>
           </div>
         </div>
-
-        <p class="benefits-footer">© {{ year }} Pastelicias · Hecho en Perú 🇵🇪</p>
       </aside>
 
-      <!-- ─── Panel derecho: form ─── -->
-      <main class="form-panel">
+      <!-- ─── Form (der) ─── -->
+      <div class="form-side fade-right">
         <div class="form-wrapper">
-          <!-- Logo mobile -->
-          <a routerLink="/" class="brand-link mobile">
-            <div class="brand-logo">P</div>
-            <strong>Pastelicias</strong>
+          <a routerLink="/" class="back-link">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Volver al inicio</span>
           </a>
 
-          <header class="form-header">
-            <h1>Crea tu pastelería</h1>
-            <p>Cuenta gratis con 30 días de prueba. Sin tarjeta.</p>
-          </header>
+          <div class="logo-block">
+            <div class="logo"><mat-icon>cake</mat-icon></div>
+            <h1 class="logo-name gradient-text">Pastelicias</h1>
+          </div>
 
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nombre del negocio</mat-label>
-              <input matInput formControlName="businessName"
-                     placeholder="Pastelería Doña Rosa"
-                     autocomplete="organization" />
-              <mat-icon matPrefix>storefront</mat-icon>
-              @if (form.get('businessName')?.invalid && form.get('businessName')?.touched) {
-                <mat-error>Mínimo 2 caracteres</mat-error>
-              }
-            </mat-form-field>
+          <div class="form-header">
+            <h2>Crea tu pastelería</h2>
+            <p>Sin tarjeta. Configurada en 2 minutos.</p>
+          </div>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Tu nombre completo</mat-label>
-              <input matInput formControlName="fullName"
-                     placeholder="María García"
-                     autocomplete="name" />
-              <mat-icon matPrefix>person_outline</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Correo electrónico</mat-label>
-              <input matInput type="email" formControlName="email"
-                     placeholder="tucorreo@gmail.com"
-                     autocomplete="email" />
-              <mat-icon matPrefix>mail_outline</mat-icon>
-              @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                <mat-error>Email inválido</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width password-field">
-              <mat-label>Contraseña</mat-label>
-              <input matInput
-                     [type]="showPassword() ? 'text' : 'password'"
-                     formControlName="password"
-                     (input)="onPasswordChange()"
-                     autocomplete="new-password" />
-              <mat-icon matPrefix>lock_outline</mat-icon>
-              <button mat-icon-button matSuffix type="button"
-                      (click)="showPassword.set(!showPassword())">
-                <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-              </button>
-              @if (form.get('password')?.invalid && form.get('password')?.touched) {
-                <mat-error>Mínimo 8 caracteres</mat-error>
-              }
-            </mat-form-field>
-
-            <!-- Password strength indicator -->
-            @if (passwordValue().length > 0) {
-              <div class="pwd-strength">
-                <div class="pwd-bars">
-                  <div class="pwd-bar" [class.active]="passwordStrength() >= 1" [attr.data-level]="passwordStrength()"></div>
-                  <div class="pwd-bar" [class.active]="passwordStrength() >= 2" [attr.data-level]="passwordStrength()"></div>
-                  <div class="pwd-bar" [class.active]="passwordStrength() >= 3" [attr.data-level]="passwordStrength()"></div>
-                  <div class="pwd-bar" [class.active]="passwordStrength() >= 4" [attr.data-level]="passwordStrength()"></div>
-                </div>
-                <span class="pwd-label" [attr.data-level]="passwordStrength()">
-                  {{ strengthLabel() }}
-                </span>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form" novalidate>
+            <div class="field">
+              <label for="business">Nombre del negocio</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">storefront</mat-icon>
+                <input
+                  id="business"
+                  type="text"
+                  formControlName="businessName"
+                  placeholder="Mi Pastelería"
+                  autocomplete="organization"
+                />
               </div>
-            }
+              @if (form.get('businessName')?.invalid && form.get('businessName')?.touched) {
+                <span class="field-error">Mínimo 2 caracteres</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="name">Tu nombre completo</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">person_outline</mat-icon>
+                <input
+                  id="name"
+                  type="text"
+                  formControlName="fullName"
+                  placeholder="María García"
+                  autocomplete="name"
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="email">Correo electrónico</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">mail_outline</mat-icon>
+                <input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  placeholder="maria@mipasteleria.com"
+                  autocomplete="email"
+                />
+              </div>
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <span class="field-error">Email inválido</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="password">Contraseña</label>
+              <div class="input-wrap">
+                <mat-icon class="input-icon">lock_outline</mat-icon>
+                <input
+                  id="password"
+                  [type]="showPassword() ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  autocomplete="new-password"
+                />
+                <button type="button" class="visibility-btn"
+                        (click)="showPassword.set(!showPassword())"
+                        [attr.aria-label]="showPassword() ? 'Ocultar' : 'Mostrar'">
+                  <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+              @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                <span class="field-error">Mínimo 8 caracteres</span>
+              } @else {
+                <span class="field-hint">Mínimo 8 caracteres</span>
+              }
+            </div>
 
             @if (errorMessage()) {
               <div class="error-alert">
@@ -170,8 +161,7 @@ import { AuthService } from '../../../core/services/auth.service';
               </div>
             }
 
-            <button mat-flat-button color="primary"
-                    class="full-width submit-btn" type="submit"
+            <button type="submit" class="submit-btn"
                     [disabled]="loading() || form.invalid">
               @if (loading()) {
                 <mat-spinner diameter="22" />
@@ -183,280 +173,333 @@ import { AuthService } from '../../../core/services/auth.service';
 
             <p class="legal-note">
               Al crear cuenta aceptas nuestros
-              <a (click)="comingSoon('Términos de servicio')">Términos</a> y
-              <a (click)="comingSoon('Política de privacidad')">Política de privacidad</a>.
+              <a (click)="comingSoon('Términos de servicio')">Términos de Servicio</a> y
+              <a (click)="comingSoon('Política de privacidad')">Política de Privacidad</a>.
+            </p>
+
+            <p class="login-link">
+              ¿Ya tienes cuenta?
+              <a routerLink="/auth/login">Iniciar sesión</a>
             </p>
           </form>
-
-          <div class="login-link">
-            ¿Ya tienes cuenta?
-            <a routerLink="/auth/login">Iniciar sesión</a>
-          </div>
         </div>
-      </main>
+      </div>
     </div>
   `,
   styles: [`
     :host { display: block; }
-    .signup-page {
+    .signup {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 1fr 1.05fr;
+      grid-template-columns: 1fr 1fr;
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      color: #0f172a;
     }
-    @media (max-width: 900px) {
-      .signup-page { grid-template-columns: 1fr; }
-      .benefits-panel { display: none; }
+    @media (max-width: 1024px) {
+      .signup { grid-template-columns: 1fr; }
+      .visual-side { display: none; }
     }
 
-    /* ─── Panel izquierdo (benefits) ─── */
-    .benefits-panel {
+    /* ─── Animations ─── */
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .fade-left { animation: fadeLeft 0.6s ease-out both; }
+    .fade-right { animation: fadeRight 0.6s ease-out both; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── Visual side (izq) ─── */
+    .visual-side {
       position: relative;
-      padding: 40px 48px;
-      background:
-        radial-gradient(at 20% 20%, rgba(100, 94, 251, 0.3) 0px, transparent 50%),
-        radial-gradient(at 80% 80%, rgba(70, 72, 212, 0.25) 0px, transparent 50%),
-        linear-gradient(135deg, #0b1c30 0%, #1a1d3f 60%, #2a1a52 100%);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      padding: 48px;
+      background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #ec4899 100%);
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .benefits-panel::before {
-      content: '';
+    .visual-pattern {
       position: absolute;
-      inset: -50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 24px 24px;
-      opacity: 0.5;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
     }
-    .benefits-panel > * { position: relative; z-index: 1; }
-    .brand-link {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 18px; font-weight: 800;
-      color: inherit; text-decoration: none;
-    }
-    .brand-link.mobile { display: none; color: #0b1c30; margin-bottom: 24px; }
-    @media (max-width: 900px) {
-      .brand-link.mobile { display: inline-flex; }
-    }
-    .brand-logo {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, #4648d4, #645efb);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 18px;
-    }
-
-    .benefits-content {
-      max-width: 480px;
-      margin: 0 auto;
+    .visual-content {
+      position: relative;
+      z-index: 1;
+      max-width: 540px;
       width: 100%;
     }
-    .benefits-tag {
-      display: inline-block;
-      padding: 5px 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: rgba(255, 255, 255, 0.9);
-      border-radius: 100px;
-      font-size: 11px; font-weight: 800;
-      letter-spacing: 0.08em;
-      margin-bottom: 20px;
+    .visual-header {
+      margin-bottom: 32px;
+      color: #fff;
     }
-    .benefits-content h2 {
-      font-size: clamp(26px, 3vw, 34px);
+    .visual-header h2 {
+      font-size: clamp(36px, 4vw, 48px);
       font-weight: 800;
       letter-spacing: -0.025em;
-      line-height: 1.15;
-      margin: 0 0 14px 0;
+      line-height: 1.1;
+      margin: 0 0 16px 0;
     }
-    .benefits-sub {
-      font-size: 15.5px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.55;
-      margin: 0 0 36px 0;
+    .visual-header p {
+      font-size: 20px;
+      color: #e0e7ff;
+      margin: 0;
+    }
+    .benefits-card {
+      padding: 32px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.3);
+      margin-bottom: 32px;
+    }
+    .benefits-image-wrap {
+      margin-bottom: 24px;
+    }
+    .benefits-image-wrap img {
+      width: 100%;
+      height: 256px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
     }
     .benefits-list {
-      list-style: none; padding: 0; margin: 0 0 36px 0;
-      display: flex; flex-direction: column; gap: 18px;
+      display: flex; flex-direction: column;
+      gap: 16px;
     }
-    .benefits-list li {
-      display: flex; gap: 14px; align-items: flex-start;
+    .benefit {
+      display: flex; align-items: center; gap: 12px;
+      color: #1f2937;
     }
-    .benefit-icon {
+    .benefit-check {
       flex-shrink: 0;
-      width: 40px; height: 40px;
-      border-radius: 10px;
-      background: rgba(100, 94, 251, 0.2);
-      color: #c7d2fe;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .benefit-icon mat-icon { font-size: 20px; width: 20px; height: 20px; }
-    .benefits-list strong {
-      display: block;
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .benefits-list span {
-      font-size: 13.5px;
-      color: rgba(255, 255, 255, 0.6);
-      line-height: 1.5;
-    }
-
-    .benefits-trust {
-      padding: 20px 22px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      display: flex; align-items: center; gap: 16px;
-    }
-    .trust-avatars {
-      display: flex; align-items: center;
-      flex-shrink: 0;
-    }
-    .trust-avatar {
-      width: 36px; height: 36px;
+      width: 24px; height: 24px;
       border-radius: 50%;
-      color: #fff;
+      background: #dcfce7;
+      color: #16a34a;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800;
-      border: 2px solid #1a1d3f;
-      margin-left: -10px;
     }
-    .trust-avatar:first-child { margin-left: 0; }
-    .trust-avatar.more {
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 11px;
+    .benefit-check mat-icon {
+      font-size: 16px; width: 16px; height: 16px;
     }
-    .benefits-trust p {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      line-height: 1.5;
-      margin: 0;
+    .benefit span {
+      font-size: 15px;
+      font-weight: 500;
     }
 
-    .benefits-footer {
-      font-size: 12.5px;
-      color: rgba(255, 255, 255, 0.45);
+    .social-proof {
+      display: flex; align-items: center; gap: 16px;
+      color: #fff;
+    }
+    .avatars { display: flex; }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      border: 2px solid #fff;
+      margin-left: -8px;
+    }
+    .avatar:first-child { margin-left: 0; }
+    .social-proof p {
+      font-size: 14px;
       margin: 0;
     }
+    .social-proof strong { font-weight: 700; }
 
-    /* ─── Panel derecho (form) ─── */
-    .form-panel {
+    /* ─── Form side (der) ─── */
+    .form-side {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
+      padding: 32px;
       background: #fff;
     }
     .form-wrapper {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
     }
-    .form-header { margin-bottom: 24px; }
-    .form-header h1 {
-      font-size: 28px;
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: #475569;
+      font-size: 14px;
+      text-decoration: none;
+      margin-bottom: 32px;
+      transition: color 0.15s ease;
+    }
+    .back-link:hover { color: #4f46e5; }
+    .back-link mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+    .logo-block {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo mat-icon { font-size: 26px; width: 26px; height: 26px; }
+    .logo-name {
+      font-size: 26px;
       font-weight: 800;
-      letter-spacing: -0.025em;
-      margin: 0 0 6px 0;
-      color: #0b1c30;
-    }
-    .form-header p {
-      font-size: 14.5px;
-      color: #64748b;
+      letter-spacing: -0.02em;
       margin: 0;
     }
 
-    .form { display: flex; flex-direction: column; gap: 4px; }
-    .full-width { width: 100%; }
+    .form-header { margin-bottom: 28px; }
+    .form-header h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin: 0 0 6px 0;
+    }
+    .form-header p {
+      color: #475569;
+      font-size: 16px;
+      margin: 0;
+    }
 
-    /* Password strength */
-    .pwd-strength {
-      display: flex; align-items: center; gap: 10px;
-      margin: -10px 0 8px;
-      padding: 0 4px;
+    .form { display: flex; flex-direction: column; gap: 20px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #1f2937;
     }
-    .pwd-bars {
-      flex: 1;
-      display: flex; gap: 4px;
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
-    .pwd-bar {
-      flex: 1;
-      height: 4px;
-      background: #e2e8f0;
-      border-radius: 2px;
-      transition: background 0.2s ease;
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: #9ca3af;
+      font-size: 20px;
+      width: 20px; height: 20px;
+      pointer-events: none;
     }
-    .pwd-bar.active[data-level="1"] { background: #ef4444; }
-    .pwd-bar.active[data-level="2"] { background: #f59e0b; }
-    .pwd-bar.active[data-level="3"] { background: #84cc16; }
-    .pwd-bar.active[data-level="4"] { background: #10b981; }
-    .pwd-label {
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      min-width: 60px;
-      text-align: right;
+    .input-wrap input {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px 0 44px;
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15.5px;
+      color: #0f172a;
+      font-family: inherit;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      outline: none;
     }
-    .pwd-label[data-level="1"] { color: #ef4444; }
-    .pwd-label[data-level="2"] { color: #d97706; }
-    .pwd-label[data-level="3"] { color: #65a30d; }
-    .pwd-label[data-level="4"] { color: #059669; }
+    .input-wrap input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+    .input-wrap input::placeholder { color: #9ca3af; }
+    .visibility-btn {
+      position: absolute;
+      right: 8px;
+      width: 36px; height: 36px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #9ca3af;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+    .visibility-btn:hover { color: #4b5563; background: #f3f4f6; }
+    .visibility-btn mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .field-error {
+      color: #dc2626;
+      font-size: 13px;
+    }
+    .field-hint {
+      color: #6b7280;
+      font-size: 13px;
+    }
 
     .error-alert {
       display: flex; align-items: center; gap: 8px;
-      background: #fee2e2; color: #dc2626;
-      padding: 10px 14px;
+      padding: 12px 16px;
+      background: #fee2e2;
+      color: #dc2626;
       border-radius: 10px;
-      font-size: 13px; font-weight: 500;
-      margin: 4px 0 8px;
+      font-size: 14px;
+      font-weight: 500;
     }
     .error-alert mat-icon { font-size: 18px; width: 18px; height: 18px; }
 
     .submit-btn {
-      height: 50px !important;
-      font-size: 15px !important;
-      font-weight: 700 !important;
-      margin-top: 8px;
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center;
       gap: 8px;
-      box-shadow: 0 8px 24px -6px rgba(70, 72, 212, 0.5) !important;
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 12px 24px -8px rgba(79, 70, 229, 0.4);
+      transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .submit-btn:hover:not(:disabled) {
+      opacity: 0.95;
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -8px rgba(79, 70, 229, 0.5);
+    }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
     .submit-btn .arrow { font-size: 18px; width: 18px; height: 18px; }
 
     .legal-note {
-      margin: 12px 0 0 0;
       text-align: center;
-      font-size: 12px;
-      color: #94a3b8;
+      color: #6b7280;
+      font-size: 12.5px;
       line-height: 1.5;
+      margin: 4px 0 0;
     }
     .legal-note a {
-      color: #64748b;
-      text-decoration: underline;
+      color: #4f46e5;
       cursor: pointer;
+      text-decoration: none;
     }
-    .legal-note a:hover { color: #4648d4; }
+    .legal-note a:hover { text-decoration: underline; }
 
     .login-link {
       text-align: center;
-      margin-top: 24px;
-      font-size: 14px;
       color: #475569;
+      font-size: 15px;
+      margin: 12px 0 0 0;
     }
     .login-link a {
-      color: #4648d4;
-      font-weight: 700;
+      color: #4f46e5;
+      font-weight: 600;
       text-decoration: none;
       margin-left: 4px;
     }
-    .login-link a:hover { text-decoration: underline; }
+    .login-link a:hover { color: #4338ca; text-decoration: underline; }
   `],
 })
 export class SignupComponent {
@@ -464,29 +507,15 @@ export class SignupComponent {
   loading = signal(false);
   showPassword = signal(false);
   errorMessage = signal('');
-  passwordValue = signal('');
-  year = new Date().getFullYear();
 
-  /** Score 0-4 según longitud y variedad de chars. */
-  passwordStrength = computed<number>(() => {
-    const p = this.passwordValue();
-    if (p.length < 8) return p.length === 0 ? 0 : 1;
-    let score = 1;
-    if (p.length >= 12) score++;
-    if (/[A-Z]/.test(p) && /[a-z]/.test(p)) score++;
-    if (/\d/.test(p) && /[^A-Za-z0-9]/.test(p)) score++;
-    return Math.min(score, 4);
-  });
+  benefits = [
+    '30 días gratis, sin tarjeta',
+    'Configuración en 2 minutos',
+    'Soporte en español',
+    'Cancela cuando quieras',
+  ];
 
-  strengthLabel = computed<string>(() => {
-    switch (this.passwordStrength()) {
-      case 1: return 'Débil';
-      case 2: return 'Aceptable';
-      case 3: return 'Buena';
-      case 4: return 'Excelente';
-      default: return '';
-    }
-  });
+  avatars = [0, 1, 2, 3];
 
   constructor(
     private fb: FormBuilder,
@@ -501,17 +530,12 @@ export class SignupComponent {
     });
   }
 
-  onPasswordChange(): void {
-    this.passwordValue.set(this.form.get('password')?.value ?? '');
-  }
-
   async onSubmit(): Promise<void> {
     if (this.form.invalid) return;
     this.loading.set(true);
     this.errorMessage.set('');
     try {
       await this.authService.signup(this.form.value);
-      // AuthService ya redirige a /onboarding
     } catch (err: unknown) {
       this.errorMessage.set(err instanceof Error ? err.message : 'Error al crear cuenta');
     } finally {
