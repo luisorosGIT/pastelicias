@@ -16,15 +16,23 @@ router.get('/summary', roles.ownerOnly, withCache(15_000), async (req: AuthReque
   try {
     const filter = (req.query.filter as DateFilter) || 'month';
     const branchId = req.branchId || undefined;
+    const businessId = req.user.businessId;
     const { from, to } = getDateRange(filter);
 
+    // SEGURIDAD MULTI-TENANT: si el OWNER está en "Todas las sucursales"
+    // (branchId vacío), tenemos que filtrar por businessId vía la relación
+    // con branch — sino la query trae datos de TODOS los negocios del SaaS.
+    const tenantFilter = branchId
+      ? { branchId }
+      : { branch: { businessId } };
+
     const saleWhere = {
-      ...(branchId && { branchId }),
+      ...tenantFilter,
       createdAt: { gte: from, lte: to },
     };
 
     const wasteWhere = {
-      ...(branchId && { branchId }),
+      ...tenantFilter,
       createdAt: { gte: from, lte: to },
     };
 
@@ -54,17 +62,24 @@ router.get('/summary', roles.ownerOnly, withCache(15_000), async (req: AuthReque
     // Top sucursales (solo vista global)
     let topBranches: { branchId: string; branchName: string; total: number }[] = [];
     if (!branchId) {
+      // FIX SEGURIDAD: filtrar por businessId via la relación branch para que
+      // no agrupe ventas de OTROS negocios cuando branchId está vacío.
       const grouped = await prisma.sale.groupBy({
         by: ['branchId'],
         _sum: { total: true },
-        where: { createdAt: { gte: from, lte: to } },
+        where: {
+          createdAt: { gte: from, lte: to },
+          branch: { businessId },
+        },
         orderBy: { _sum: { total: 'desc' } },
         take: 5,
       });
 
       const branchIds = grouped.map((g) => g.branchId);
       const branches = await prisma.branch.findMany({
-        where: { id: { in: branchIds } },
+        // Defensa adicional: aseguramos que las branches devueltas también
+        // sean del business del user (aunque después del groupBy ya lo serían).
+        where: { id: { in: branchIds }, businessId },
         select: { id: true, name: true },
       });
 
@@ -78,7 +93,6 @@ router.get('/summary', roles.ownerOnly, withCache(15_000), async (req: AuthReque
 
     // ── Métricas extra: hora pico, día pico, productos vendidos, top productos,
     //    top insumos consumidos, insumos críticos, tendencia de costos ──────
-    const businessId = req.user.businessId;
     const branchFilterSql = branchId
       ? Prisma.sql`AND s."branchId" = ${branchId}`
       : Prisma.sql`AND b."businessId" = ${businessId}`;
@@ -330,10 +344,17 @@ router.get('/export', roles.ownerOnly, async (req: AuthRequest, res: Response) =
   try {
     const filter = (req.query.filter as DateFilter) || 'month';
     const branchId = req.branchId || undefined;
+    const businessId = req.user.businessId;
     const { from, to } = getDateRange(filter);
 
+    // SEGURIDAD MULTI-TENANT: ver comentario en /summary. Sin este filtro el
+    // CSV exportaría ventas de OTROS negocios cuando branchId está vacío.
+    const tenantFilter = branchId
+      ? { branchId }
+      : { branch: { businessId } };
+
     const sales = await prisma.sale.findMany({
-      where: { ...(branchId && { branchId }), createdAt: { gte: from, lte: to } },
+      where: { ...tenantFilter, createdAt: { gte: from, lte: to } },
       include: {
         items: { include: { recipe: { select: { name: true } } } },
         branch: { select: { name: true } },
