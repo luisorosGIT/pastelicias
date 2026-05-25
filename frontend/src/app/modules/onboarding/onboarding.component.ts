@@ -37,8 +37,8 @@ import { homePathForRole } from '../../core/utils/home-path';
         <!-- Header con progreso -->
         <div class="header">
           <div class="brand">
-            <img src="assets/branding/logo.png" alt="Pastelicias" class="brand-logo-img" />
-            <span>Pastelicias</span>
+            <img src="assets/branding/logo.png" alt="Genimatech" class="brand-logo-img" />
+            <span>Genimatech</span>
           </div>
           <div class="progress">
             <div class="step-dot" [class.active]="step() >= 1" [class.completed]="step() > 1">1</div>
@@ -52,7 +52,7 @@ import { homePathForRole } from '../../core/utils/home-path';
         <!-- Paso 1: Información del negocio -->
         @if (step() === 1) {
           <div class="step-content">
-            <h2>👋 Bienvenido a Pastelicias</h2>
+            <h2>👋 Bienvenido a Genimatech</h2>
             <p class="step-sub">Empecemos configurando los datos básicos de tu negocio.</p>
 
             <form [formGroup]="businessForm" class="form">
@@ -449,7 +449,7 @@ export class OnboardingComponent implements OnInit {
       this.http.post<ApiResponse>(`${environment.apiUrl}/settings/complete-onboarding`, {})
     );
     this.authService.markOnboardingCompleted();
-    this.snack.open('🎉 ¡Listo! Bienvenido a Pastelicias', 'OK', { duration: 3000 });
+    this.snack.open('🎉 ¡Listo! Bienvenido a Genimatech', 'OK', { duration: 3000 });
     const role = this.authService.role();
     this.router.navigate([homePathForRole(role ?? 'OWNER')]);
   }

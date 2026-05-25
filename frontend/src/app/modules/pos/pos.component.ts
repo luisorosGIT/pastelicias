@@ -745,7 +745,7 @@ export class PosComponent implements OnInit {
       this.dialog.open(TicketDialogComponent, {
         data: {
           sale: full,
-          business: biz ?? { name: 'Pastelicias', ruc: null, taxRate: this.taxRate() },
+          business: biz ?? { name: 'Genimatech', ruc: null, taxRate: this.taxRate() },
         },
       });
 

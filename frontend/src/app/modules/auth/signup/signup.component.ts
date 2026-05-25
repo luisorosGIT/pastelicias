@@ -29,7 +29,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <div class="visual-content">
           <div class="visual-header">
             <h2>Empieza gratis hoy</h2>
-            <p>Únete a cientos de pastelerías que ya confían en Pastelicias.</p>
+            <p>Únete a cientos de pastelerías que ya confían en Genimatech.</p>
           </div>
 
           <div class="benefits-card">
@@ -58,7 +58,7 @@ import { AuthService } from '../../../core/services/auth.service';
                 <div class="avatar"></div>
               }
             </div>
-            <p><strong>500+ pastelerías</strong> ya están usando Pastelicias.</p>
+            <p><strong>500+ pastelerías</strong> ya están usando Genimatech.</p>
           </div>
         </div>
       </aside>
@@ -72,8 +72,8 @@ import { AuthService } from '../../../core/services/auth.service';
           </a>
 
           <div class="logo-block">
-            <img src="assets/branding/logo.png" alt="Pastelicias" class="logo-img" />
-            <h1 class="logo-name gradient-text">Pastelicias</h1>
+            <img src="assets/branding/logo.png" alt="Genimatech" class="logo-img" />
+            <h1 class="logo-name gradient-text">Genimatech</h1>
           </div>
 
           <div class="form-header">

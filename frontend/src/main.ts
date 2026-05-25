@@ -7,6 +7,6 @@ import { initSentry } from './app/core/sentry';
 // initSentry es no-op si environment.sentryDsn está vacío.
 initSentry().finally(() => {
   bootstrapApplication(AppComponent, appConfig).catch((err) =>
-    console.error('Error al iniciar Pastelicias:', err)
+    console.error('Error al iniciar Genimatech:', err)
   );
 });

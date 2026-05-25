@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Página PÚBLICA /pricing — adaptación fiel del diseño Figma.
@@ -101,8 +102,8 @@ const PLANS: PublicPlan[] = [
       <nav class="navbar">
         <div class="navbar-inner">
           <a routerLink="/" class="nav-brand">
-            <img src="assets/branding/logo.png" alt="Pastelicias" class="nav-logo-img" />
-            <span class="nav-name">Pastelicias</span>
+            <img src="assets/branding/logo.png" alt="Genimatech" class="nav-logo-img" />
+            <span class="nav-name">Genimatech</span>
           </a>
           <div class="nav-menu">
             <a routerLink="/" class="nav-link">Inicio</a>
@@ -174,7 +175,7 @@ const PLANS: PublicPlan[] = [
         <div class="info-note fade-up">
           <mat-icon class="info-icon">help_outline</mat-icon>
           <p>
-            <strong>Todos los planes incluyen 30 días gratis para probar Pastelicias.</strong>
+            <strong>Todos los planes incluyen 30 días gratis para probar Genimatech.</strong>
             No te cobramos hasta que tú elijas un plan pagado
             <span class="info-highlight">(precios en soles peruanos incluyen IGV)</span>.
           </p>
@@ -200,21 +201,52 @@ const PLANS: PublicPlan[] = [
         </div>
       </section>
 
-      <!-- CTA -->
+      <!-- CTA final -->
       <section class="cta-final">
+        <div class="cta-pattern"></div>
         <div class="cta-content fade-up">
-          <h2>¿Listo para empezar?</h2>
-          <p>30 días gratis. Sin tarjeta. Sin instalación.</p>
-          <a routerLink="/auth/signup" class="btn-light">
-            <mat-icon>bolt</mat-icon>
-            <span>Crear cuenta gratis</span>
-          </a>
+          <h2>Empieza a controlar tu pastelería hoy</h2>
+          <p>Únete a cientos de pastelerías que ya están optimizando sus costos y aumentando sus ganancias.</p>
+          <a routerLink="/auth/signup" class="btn-light">Crear cuenta gratis</a>
+          <p class="cta-fineprint">30 días de prueba · Sin tarjeta de crédito · Cancela cuando quieras</p>
         </div>
       </section>
 
-      <!-- Footer -->
+      <!-- Footer 4 columnas -->
       <footer class="footer">
-        <p>© {{ year }} Pastelicias · Hecho en Perú 🇵🇪</p>
+        <div class="footer-grid">
+          <div class="footer-col footer-brand">
+            <div class="footer-brand-row">
+              <img src="assets/branding/logo.png" alt="Genimatech" class="footer-logo" />
+              <strong>Genimatech</strong>
+            </div>
+            <p class="footer-tagline">
+              Software de gestión especializado para pastelerías, panaderías y dulcerías.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Producto</h4>
+            <a routerLink="/pricing">Precios</a>
+            <a routerLink="/">Funcionalidades</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>Empresa</h4>
+            <a (click)="comingSoon('Sobre nosotros')">Sobre nosotros</a>
+            <a (click)="comingSoon('Contacto')">Contacto</a>
+          </div>
+
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <a (click)="comingSoon('Términos de Servicio')">Términos de Servicio</a>
+            <a (click)="comingSoon('Política de Privacidad')">Política de Privacidad</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© {{ year }} Genimatech. Todos los derechos reservados.</p>
+        </div>
       </footer>
     </div>
   `,
@@ -556,58 +588,147 @@ const PLANS: PublicPlan[] = [
 
     /* ─── CTA final ─── */
     .cta-final {
-      padding: 80px 24px;
-      background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #ec4899 100%);
-      text-align: center;
+      position: relative;
+      padding: 96px 24px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 40%, #ec4899 100%);
       color: #fff;
+      text-align: center;
+      overflow: hidden;
+    }
+    .cta-pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.5;
+      pointer-events: none;
     }
     .cta-content {
+      position: relative;
+      z-index: 1;
       max-width: 800px;
       margin: 0 auto;
     }
-    .cta-content h2 {
-      font-size: clamp(32px, 4vw, 48px);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      margin: 0 0 24px 0;
+    .cta-final h2 {
+      font-size: clamp(32px, 4vw, 44px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin: 0 0 16px 0;
     }
-    .cta-content p {
-      font-size: 20px;
-      color: #e0e7ff;
-      margin: 0 0 32px 0;
+    .cta-final > .cta-content > p {
+      font-size: 19px;
+      color: #f5f3ff;
+      line-height: 1.5;
+      max-width: 640px;
+      margin: 0 auto 32px;
     }
     .btn-light {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 0 36px; height: 56px;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 36px; height: 52px;
       background: #fff;
-      color: #4f46e5;
+      color: #7c3aed;
       border-radius: 12px;
-      font-size: 17px; font-weight: 600;
+      font-size: 17px;
+      font-weight: 600;
       text-decoration: none;
-      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.25);
-      transition: box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.18);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .btn-light:hover {
-      background: #f5f3ff;
       transform: translateY(-2px);
-      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.25);
     }
-    .btn-light mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .cta-fineprint {
+      margin-top: 24px !important;
+      font-size: 13.5px !important;
+      color: #f3e8ff !important;
+      max-width: none !important;
+    }
 
-    /* ─── Footer ─── */
+    /* ─── Footer 4 columnas ─── */
     .footer {
-      padding: 48px 24px;
-      background: #111827;
-      color: #9ca3af;
-      text-align: center;
-      font-size: 14.5px;
+      background: #0f1729;
+      color: #fff;
+      padding: 64px 24px 32px;
     }
-    .footer p { margin: 0; }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 40px;
+    }
+    @media (max-width: 880px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+    .footer-col h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 16px 0;
+      letter-spacing: -0.01em;
+    }
+    .footer-col a {
+      display: block;
+      color: #9ca3af;
+      font-size: 14.5px;
+      text-decoration: none;
+      padding: 6px 0;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .footer-col a:hover { color: #c4b5fd; }
+    .footer-brand-row {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+    .footer-logo {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: block;
+      object-fit: cover;
+    }
+    .footer-brand-row strong {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .footer-tagline {
+      font-size: 14px;
+      color: #9ca3af;
+      line-height: 1.55;
+      margin: 0;
+      max-width: 280px;
+    }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+    .footer-bottom p {
+      font-size: 14px;
+      color: #9ca3af;
+      margin: 0;
+    }
   `],
 })
 export class PricingComponent {
   plans = PLANS;
   year = new Date().getFullYear();
+
+  constructor(private snack: MatSnackBar) {}
+
+  comingSoon(featureName: string): void {
+    this.snack.open(`${featureName} — disponible pronto.`, 'OK', { duration: 4000 });
+  }
 
   faqs = [
     {

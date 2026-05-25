@@ -29,9 +29,9 @@ import { AuthService } from '../../../core/services/auth.service';
           </a>
 
           <div class="logo-block">
-            <img src="assets/branding/logo.png" alt="Pastelicias" class="logo-img" />
+            <img src="assets/branding/logo.png" alt="Genimatech" class="logo-img" />
             <div>
-              <h1 class="logo-name gradient-text">Pastelicias</h1>
+              <h1 class="logo-name gradient-text">Genimatech</h1>
               <p class="logo-tagline">Sistema de Gestión</p>
             </div>
           </div>

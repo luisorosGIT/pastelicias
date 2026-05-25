@@ -46,7 +46,7 @@ const NAV_ITEMS: NavItem[] = [
             @if (brandLogoUrl()) {
               <img [src]="brandLogoUrl()" [alt]="brandName()" (error)="onBrandLogoError()" />
             } @else {
-              <img src="assets/branding/logo.png" alt="Pastelicias" class="brand-fallback-img" />
+              <img src="assets/branding/logo.png" alt="Genimatech" class="brand-fallback-img" />
             }
           </div>
           <div class="brand-text">
@@ -117,7 +117,7 @@ const NAV_ITEMS: NavItem[] = [
             <span class="trial-msg">
               @if (plan.trialExpired()) {
                 <strong>Tu prueba gratuita terminó.</strong>
-                Mejora tu plan para seguir usando Pastelicias.
+                Mejora tu plan para seguir usando Genimatech.
               } @else {
                 <strong>Tu prueba gratuita termina en {{ plan.trialDaysLeft() }} {{ plan.trialDaysLeft() === 1 ? 'día' : 'días' }}.</strong>
                 Mejora tu plan antes que expire.
@@ -431,14 +431,14 @@ export class SidebarComponent implements OnInit {
     // Initial title
     const url = this.router.url;
     const item = NAV_ITEMS.find((i) => url.startsWith(i.route));
-    this.currentPageTitle.set(item?.label ?? 'Pastelicias');
+    this.currentPageTitle.set(item?.label ?? 'Genimatech');
 
     // Update on navigation
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects;
         const navItem = NAV_ITEMS.find((i) => url.startsWith(i.route));
-        this.currentPageTitle.set(navItem?.label ?? 'Pastelicias');
+        this.currentPageTitle.set(navItem?.label ?? 'Genimatech');
       }
     });
   }
@@ -460,7 +460,7 @@ export class SidebarComponent implements OnInit {
 
   /** Nombre del negocio mostrado en el sidebar y mobile title. Si aún no se ha
    *  cargado (primer render), usa "Pastelicias" como fallback. */
-  brandName = computed(() => this.settings.business()?.name ?? 'Pastelicias');
+  brandName = computed(() => this.settings.business()?.name ?? 'Genimatech');
 
   /** True si la imagen del logo falló al cargar — vuelve al ícono default. */
   private brandLogoFailed = signal(false);
@@ -489,7 +489,7 @@ export class SidebarComponent implements OnInit {
     return NAV_ITEMS.filter((item) => item.roles.includes(role));
   });
 
-  currentPageTitle = signal('Pastelicias');
+  currentPageTitle = signal('Genimatech');
 
   userInitials = computed(() => {
     const name = this.authService.user()?.fullName ?? '';
