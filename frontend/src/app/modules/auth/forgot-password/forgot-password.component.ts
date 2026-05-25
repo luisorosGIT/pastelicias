@@ -1,22 +1,22 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment';
 
 /**
- * Flujo de recuperación de contraseña con código de 6 dígitos.
+ * Flujo de recuperación de contraseña — versión Supabase Auth.
  *
- * 3 pasos internos en un solo componente:
- *  1. Email → POST /auth/forgot-password (manda código por email)
- *  2. Código 6 dígitos → POST /auth/verify-reset-code (devuelve resetToken)
- *  3. Nueva contraseña → POST /auth/reset-password (cambia password)
+ * Un solo paso: el user ingresa su email → backend llama a
+ * supabase.auth.resetPasswordForEmail() → Supabase manda un email con link
+ * de recovery → al clickear, el user aterriza en /auth/reset-password donde
+ * pone su nueva contraseña.
  *
- * Si el usuario refresca queda en el paso 1 (no persistimos estado).
+ * Ventaja: Supabase envía los emails desde su propio SMTP, sin restricciones
+ * de destinatario (a diferencia de Resend en modo testing).
  */
 @Component({
   selector: 'app-forgot-password',
@@ -39,22 +39,15 @@ import { environment } from '@env/environment';
             </div>
           </div>
 
-          <!-- Step indicator -->
-          <div class="steps">
-            <div class="step" [class.active]="step() >= 1" [class.done]="step() > 1">1</div>
-            <div class="step-line" [class.active]="step() > 1"></div>
-            <div class="step" [class.active]="step() >= 2" [class.done]="step() > 2">2</div>
-            <div class="step-line" [class.active]="step() > 2"></div>
-            <div class="step" [class.active]="step() >= 3">3</div>
-          </div>
-
-          <!-- ─── Paso 1: email ─── -->
-          @if (step() === 1) {
+          @if (!sent()) {
             <div class="step-content">
               <h2>Recupera tu contraseña</h2>
-              <p class="step-sub">Ingresa tu correo y te enviaremos un código de 6 dígitos.</p>
+              <p class="step-sub">
+                Ingresa el correo de tu cuenta. Te enviaremos un enlace para
+                crear una contraseña nueva.
+              </p>
 
-              <form [formGroup]="emailForm" (ngSubmit)="submitEmail()" class="form" novalidate>
+              <form [formGroup]="emailForm" (ngSubmit)="submit()" class="form" novalidate>
                 <div class="field">
                   <label>Correo electrónico</label>
                   <div class="input-wrap">
@@ -80,128 +73,32 @@ import { environment } from '@env/environment';
                   @if (loading()) {
                     <mat-spinner diameter="22" />
                   } @else {
-                    <span>Enviar código</span>
+                    <span>Enviar enlace</span>
                     <mat-icon>send</mat-icon>
                   }
                 </button>
               </form>
             </div>
-          }
-
-          <!-- ─── Paso 2: código ─── -->
-          @if (step() === 2) {
-            <div class="step-content">
+          } @else {
+            <div class="step-content success">
+              <div class="success-icon">
+                <mat-icon>mark_email_read</mat-icon>
+              </div>
               <h2>Revisa tu correo</h2>
               <p class="step-sub">
-                Si <strong>{{ emailValue() }}</strong> existe en nuestra base, ya te enviamos un código.
-                Pega los 6 dígitos abajo.
+                Si <strong>{{ emailValue() }}</strong> está registrado, te enviamos
+                un enlace a tu bandeja. Ábrelo y crea tu nueva contraseña.
               </p>
-
-              <form [formGroup]="codeForm" (ngSubmit)="submitCode()" class="form" novalidate>
-                <div class="field">
-                  <label>Código de 6 dígitos</label>
-                  <div class="input-wrap">
-                    <mat-icon class="input-icon">pin</mat-icon>
-                    <input type="text"
-                           formControlName="code"
-                           inputmode="numeric"
-                           maxlength="6"
-                           placeholder="123456"
-                           autocomplete="one-time-code"
-                           autofocus />
-                  </div>
-                  @if (codeForm.get('code')?.invalid && codeForm.get('code')?.touched) {
-                    <span class="field-error">Debe ser 6 dígitos numéricos</span>
-                  } @else {
-                    <span class="field-hint">El código vence en 15 minutos.</span>
-                  }
-                </div>
-
-                @if (errorMessage()) {
-                  <div class="error-alert">
-                    <mat-icon>error_outline</mat-icon>
-                    {{ errorMessage() }}
-                  </div>
-                }
-
-                <button type="submit" class="submit-btn"
-                        [disabled]="loading() || codeForm.invalid">
-                  @if (loading()) {
-                    <mat-spinner diameter="22" />
-                  } @else {
-                    <span>Verificar código</span>
-                    <mat-icon>arrow_forward</mat-icon>
-                  }
-                </button>
-
-                <button type="button" class="link-btn" (click)="restart()">
-                  ¿No recibiste el código? Empezar de nuevo
-                </button>
-              </form>
-            </div>
-          }
-
-          <!-- ─── Paso 3: nueva password ─── -->
-          @if (step() === 3) {
-            <div class="step-content">
-              <h2>Crea tu nueva contraseña</h2>
-              <p class="step-sub">Mínimo 8 caracteres. Te recomendamos combinar letras, números y símbolos.</p>
-
-              <form [formGroup]="passwordForm" (ngSubmit)="submitPassword()" class="form" novalidate>
-                <div class="field">
-                  <label>Nueva contraseña</label>
-                  <div class="input-wrap">
-                    <mat-icon class="input-icon">lock_outline</mat-icon>
-                    <input
-                      [type]="showPassword() ? 'text' : 'password'"
-                      formControlName="password"
-                      placeholder="••••••••"
-                      autocomplete="new-password"
-                      autofocus
-                    />
-                    <button type="button" class="visibility-btn"
-                            (click)="showPassword.set(!showPassword())">
-                      <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-                    </button>
-                  </div>
-                  @if (passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched) {
-                    <span class="field-error">Mínimo 8 caracteres</span>
-                  }
-                </div>
-
-                <div class="field">
-                  <label>Confirmar contraseña</label>
-                  <div class="input-wrap">
-                    <mat-icon class="input-icon">lock_outline</mat-icon>
-                    <input
-                      [type]="showPassword() ? 'text' : 'password'"
-                      formControlName="confirm"
-                      placeholder="••••••••"
-                      autocomplete="new-password"
-                    />
-                  </div>
-                  @if (passwordForm.errors?.['mismatch'] && passwordForm.get('confirm')?.touched) {
-                    <span class="field-error">Las contraseñas no coinciden</span>
-                  }
-                </div>
-
-                @if (errorMessage()) {
-                  <div class="error-alert">
-                    <mat-icon>error_outline</mat-icon>
-                    {{ errorMessage() }}
-                  </div>
-                }
-
-                <button type="submit" class="submit-btn"
-                        [disabled]="loading() || passwordForm.invalid">
-                  @if (loading()) {
-                    <mat-spinner diameter="22" />
-                  } @else {
-                    <span>Cambiar contraseña</span>
-                    <mat-icon>check</mat-icon>
-                  }
-                </button>
-              </form>
+              <div class="info-box">
+                <mat-icon>tips_and_updates</mat-icon>
+                <span>
+                  ¿No lo ves? Revisa la carpeta de SPAM o Promociones. Si en
+                  5 minutos no llegó, vuelve a intentar.
+                </span>
+              </div>
+              <button type="button" class="link-btn" (click)="reset()">
+                Enviar a otro correo
+              </button>
             </div>
           }
 
@@ -247,18 +144,9 @@ import { environment } from '@env/environment';
       .visual-side { display: none; }
     }
 
-    @keyframes fadeLeft {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes fadeRight {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .fade-left { animation: fadeLeft 0.6s ease-out both; }
     .fade-right { animation: fadeRight 0.6s ease-out both; }
 
@@ -269,7 +157,6 @@ import { environment } from '@env/environment';
       background-clip: text;
     }
 
-    /* Form side */
     .form-side {
       display: flex; align-items: center; justify-content: center;
       padding: 32px; background: #fff;
@@ -286,7 +173,7 @@ import { environment } from '@env/environment';
 
     .logo-block {
       display: flex; align-items: center; gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
     }
     .logo-img {
       width: 48px; height: 48px; border-radius: 12px;
@@ -298,38 +185,7 @@ import { environment } from '@env/environment';
     }
     .logo-tagline { font-size: 13px; color: #6b7280; margin: 0; }
 
-    /* Steps */
-    .steps {
-      display: flex; align-items: center; justify-content: center;
-      gap: 4px; margin: 8px 0 32px;
-    }
-    .step {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: #f1f5f9;
-      color: #94a3b8;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700;
-      transition: all 0.2s ease;
-    }
-    .step.active {
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      color: #fff;
-    }
-    .step.done {
-      background: #10b981; color: #fff;
-    }
-    .step-line {
-      flex: 0 0 28px;
-      height: 2px;
-      background: #f1f5f9;
-      transition: background 0.2s ease;
-    }
-    .step-line.active { background: #10b981; }
-
-    .step-content {
-      animation: fadeIn 0.35s ease-out both;
-    }
+    .step-content { animation: fadeIn 0.35s ease-out both; }
     .step-content h2 {
       font-size: 28px; font-weight: 800;
       letter-spacing: -0.025em; margin: 0 0 8px 0;
@@ -339,6 +195,34 @@ import { environment } from '@env/environment';
       margin: 0 0 24px 0;
     }
     .step-sub strong { color: #1f2937; }
+
+    .success { text-align: center; }
+    .success .step-sub { text-align: center; }
+    .success-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d1fae5, #6ee7b7);
+      color: #065f46;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-icon mat-icon { font-size: 36px; width: 36px; height: 36px; }
+    .info-box {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px 16px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      color: #1f2937;
+      font-size: 13.5px;
+      line-height: 1.5;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+    .info-box mat-icon {
+      color: #4f46e5; flex-shrink: 0;
+      font-size: 20px; width: 20px; height: 20px;
+    }
 
     .form { display: flex; flex-direction: column; gap: 20px; }
     .field { display: flex; flex-direction: column; gap: 8px; }
@@ -366,27 +250,7 @@ import { environment } from '@env/environment';
       border-color: #4f46e5;
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
-    .input-wrap input[inputmode="numeric"] {
-      letter-spacing: 0.3em;
-      font-size: 18px;
-      font-weight: 600;
-      text-align: center;
-      padding-left: 14px;
-    }
-    .input-wrap input[inputmode="numeric"] ~ .input-icon { display: none; }
-    .visibility-btn {
-      position: absolute; right: 8px;
-      width: 36px; height: 36px;
-      background: transparent; border: none;
-      border-radius: 8px;
-      color: #9ca3af; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 0.15s ease, background 0.15s ease;
-    }
-    .visibility-btn:hover { color: #4b5563; background: #f3f4f6; }
-    .visibility-btn mat-icon { font-size: 20px; width: 20px; height: 20px; }
     .field-error { color: #dc2626; font-size: 13px; }
-    .field-hint { color: #6b7280; font-size: 13px; }
 
     .error-alert {
       display: flex; align-items: center; gap: 8px;
@@ -441,7 +305,6 @@ import { environment } from '@env/environment';
     }
     .login-link a:hover { color: #4338ca; text-decoration: underline; }
 
-    /* Visual side */
     .visual-side {
       position: relative;
       padding: 48px;
@@ -457,10 +320,7 @@ import { environment } from '@env/environment';
       background-size: 60px 60px;
       opacity: 0.4;
     }
-    .visual-content {
-      position: relative; z-index: 1;
-      max-width: 480px; width: 100%;
-    }
+    .visual-content { position: relative; z-index: 1; max-width: 480px; width: 100%; }
     .visual-card {
       padding: 32px;
       background: rgba(255, 255, 255, 0.95);
@@ -485,47 +345,21 @@ import { environment } from '@env/environment';
   `],
 })
 export class ForgotPasswordComponent {
-  step = signal<1 | 2 | 3>(1);
   loading = signal(false);
-  showPassword = signal(false);
+  sent = signal(false);
   errorMessage = signal('');
   emailValue = signal('');
-  resetToken = signal<string | null>(null);
 
   emailForm: FormGroup;
-  codeForm: FormGroup;
-  passwordForm: FormGroup;
-
   private readonly authUrl = `${environment.apiUrl}/auth`;
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpClient,
-    private router: Router,
-    private snack: MatSnackBar,
-  ) {
+  constructor(private fb: FormBuilder, private http: HttpClient) {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
-    this.codeForm = this.fb.group({
-      code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
-    });
-    this.passwordForm = this.fb.group(
-      {
-        password: ['', [Validators.required, Validators.minLength(8)]],
-        confirm: ['', [Validators.required]],
-      },
-      {
-        validators: (g) => {
-          const pwd = g.get('password')?.value;
-          const conf = g.get('confirm')?.value;
-          return pwd && conf && pwd !== conf ? { mismatch: true } : null;
-        },
-      }
-    );
   }
 
-  async submitEmail(): Promise<void> {
+  async submit(): Promise<void> {
     if (this.emailForm.invalid) return;
     this.loading.set(true);
     this.errorMessage.set('');
@@ -535,7 +369,7 @@ export class ForgotPasswordComponent {
       await firstValueFrom(
         this.http.post(`${this.authUrl}/forgot-password`, { email })
       );
-      this.step.set(2);
+      this.sent.set(true);
     } catch (err: unknown) {
       this.errorMessage.set(this.errorText(err));
     } finally {
@@ -543,60 +377,17 @@ export class ForgotPasswordComponent {
     }
   }
 
-  async submitCode(): Promise<void> {
-    if (this.codeForm.invalid) return;
-    this.loading.set(true);
+  reset(): void {
+    this.sent.set(false);
+    this.emailForm.reset();
     this.errorMessage.set('');
-    try {
-      const code = this.codeForm.value.code as string;
-      const res = await firstValueFrom(
-        this.http.post<{ success: boolean; data: { resetToken: string } }>(
-          `${this.authUrl}/verify-reset-code`,
-          { email: this.emailValue(), code }
-        )
-      );
-      this.resetToken.set(res.data.resetToken);
-      this.step.set(3);
-    } catch (err: unknown) {
-      this.errorMessage.set(this.errorText(err));
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  async submitPassword(): Promise<void> {
-    if (this.passwordForm.invalid || !this.resetToken()) return;
-    this.loading.set(true);
-    this.errorMessage.set('');
-    try {
-      await firstValueFrom(
-        this.http.post(`${this.authUrl}/reset-password`, {
-          resetToken: this.resetToken(),
-          newPassword: this.passwordForm.value.password,
-        })
-      );
-      this.snack.open('✓ Contraseña actualizada. Inicia sesión.', 'OK', { duration: 5000 });
-      this.router.navigate(['/auth/login']);
-    } catch (err: unknown) {
-      this.errorMessage.set(this.errorText(err));
-    } finally {
-      this.loading.set(false);
-    }
-  }
-
-  restart(): void {
-    this.step.set(1);
-    this.codeForm.reset();
-    this.passwordForm.reset();
-    this.errorMessage.set('');
-    this.resetToken.set(null);
   }
 
   private errorText(err: unknown): string {
     if (typeof err === 'object' && err && 'error' in err) {
       const body = (err as { error?: { error?: string; message?: string } }).error;
-      return body?.error ?? body?.message ?? 'Ocurrió un error. Intenta de nuevo.';
+      return body?.error ?? body?.message ?? 'No pudimos enviar el enlace. Intenta de nuevo.';
     }
-    return err instanceof Error ? err.message : 'Ocurrió un error. Intenta de nuevo.';
+    return err instanceof Error ? err.message : 'No pudimos enviar el enlace. Intenta de nuevo.';
   }
 }

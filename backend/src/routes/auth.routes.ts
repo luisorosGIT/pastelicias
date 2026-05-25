@@ -1,10 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
-import crypto from 'crypto';
 import prisma from '../services/prisma.service';
 import { ok, badRequest, serverError } from '../utils/response';
-import { sendPasswordResetEmail } from '../services/email.service';
 
 const router = Router();
 
@@ -218,159 +216,45 @@ router.post('/refresh', async (req: Request, res: Response) => {
   }
 });
 
-// ─── Reset password con código de 6 dígitos ───────────────────────────────────
-
-const CODE_TTL_MS = 15 * 60 * 1000; // 15 minutos
-const RESET_TOKEN_TTL_MS = 10 * 60 * 1000; // 10 minutos para usar el token
-
-/** Genera un número entre 100000 y 999999 sin sesgo modular. */
-function generateCode(): string {
-  return String(crypto.randomInt(100000, 1000000));
-}
+// ─── Reset password con Supabase Auth ─────────────────────────────────────────
+// Usa el flujo built-in de Supabase: el user pone email → Supabase manda un
+// email con link de recovery → user clickea → frontend recibe el token en el
+// fragment de URL → llama a supabase.auth.updateUser({ password }) directamente.
+// Ventaja vs. codigo custom: Supabase manda los emails con su SMTP (gratis,
+// sin limite de destinatarios), no requiere Resend ni dominio verificado.
 
 const forgotSchema = z.object({
   email: z.string().email('Email inválido'),
 });
 
-// POST /api/auth/forgot-password — paso 1: pide email, manda código
+// POST /api/auth/forgot-password — Supabase manda el email con link
 router.post('/forgot-password', async (req: Request, res: Response) => {
   try {
     const parsed = forgotSchema.safeParse(req.body);
     if (!parsed.success) return badRequest(res, parsed.error.errors[0].message);
     const email = parsed.data.email.toLowerCase().trim();
 
-    // Política: respondemos OK incluso si el email no existe — evita enumeración.
-    const userExists = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+    // URL del frontend donde el user aterrizará al clickear el link. Supabase
+    // pone el access_token en el fragment (#access_token=...).
+    const frontendUrl = process.env.FRONTEND_URL || 'https://genimatech.vercel.app';
+    const redirectTo = `${frontendUrl}/auth/reset-password`;
 
-    if (userExists) {
-      // Invalida códigos previos para este email (defensa contra bruteforce)
-      await prisma.passwordResetCode.updateMany({
-        where: { email, used: false },
-        data: { used: true },
-      });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
 
-      const code = generateCode();
-      await prisma.passwordResetCode.create({
-        data: {
-          email,
-          code,
-          expiresAt: new Date(Date.now() + CODE_TTL_MS),
-        },
-      });
-
-      // IMPORTANTE: esperamos el envío. En serverless (Vercel) si no awaitamos,
-      // la función puede terminar y matar la promesa antes de que loguee/envíe.
-      try {
-        await sendPasswordResetEmail(email, code);
-      } catch (e) {
-        console.error('[forgot-password] email send failed:', e);
-      }
+    // No leakeamos si el email existe — siempre respondemos OK.
+    if (error) {
+      console.error('[forgot-password] Supabase error:', error.message);
     }
 
     return ok(
       res,
       { email },
-      'Si el correo existe, te enviamos un código de 6 dígitos. Revisa tu bandeja.'
+      'Si el correo está registrado, te enviamos un link para restablecer tu contraseña. Revisa tu bandeja.'
     );
   } catch (e) {
     console.error('[auth/forgot-password]', e);
-    return serverError(res);
-  }
-});
-
-const verifySchema = z.object({
-  email: z.string().email('Email inválido'),
-  code: z.string().regex(/^\d{6}$/, 'Código de 6 dígitos'),
-});
-
-// POST /api/auth/verify-reset-code — paso 2: valida código, devuelve token corto
-router.post('/verify-reset-code', async (req: Request, res: Response) => {
-  try {
-    const parsed = verifySchema.safeParse(req.body);
-    if (!parsed.success) return badRequest(res, parsed.error.errors[0].message);
-
-    const email = parsed.data.email.toLowerCase().trim();
-    const code = parsed.data.code;
-
-    const entry = await prisma.passwordResetCode.findFirst({
-      where: { email, code, used: false, expiresAt: { gt: new Date() } },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (!entry) {
-      return badRequest(res, 'Código inválido o expirado. Pide uno nuevo.');
-    }
-
-    // Marca usado para que no se reutilice. Generamos un resetToken random
-    // (firmado con el id de la entry) que el frontend usa en el paso 3.
-    await prisma.passwordResetCode.update({
-      where: { id: entry.id },
-      data: { used: true },
-    });
-
-    // Token = entry.id + expiresAt (codificado). Lo verificamos en /reset-password.
-    const tokenPayload = {
-      id: entry.id,
-      email,
-      exp: Date.now() + RESET_TOKEN_TTL_MS,
-    };
-    const token = Buffer.from(JSON.stringify(tokenPayload)).toString('base64url');
-
-    return ok(res, { resetToken: token, email }, 'Código verificado');
-  } catch (e) {
-    console.error('[auth/verify-reset-code]', e);
-    return serverError(res);
-  }
-});
-
-const resetSchema = z.object({
-  resetToken: z.string().min(1, 'Token requerido'),
-  newPassword: z.string().min(8, 'Mínimo 8 caracteres'),
-});
-
-// POST /api/auth/reset-password — paso 3: cambia password con el token
-router.post('/reset-password', async (req: Request, res: Response) => {
-  try {
-    const parsed = resetSchema.safeParse(req.body);
-    if (!parsed.success) return badRequest(res, parsed.error.errors[0].message);
-
-    let payload: { id: string; email: string; exp: number };
-    try {
-      payload = JSON.parse(Buffer.from(parsed.data.resetToken, 'base64url').toString('utf-8'));
-    } catch {
-      return badRequest(res, 'Token inválido');
-    }
-    if (!payload?.id || !payload?.email || !payload?.exp || payload.exp < Date.now()) {
-      return badRequest(res, 'Token inválido o expirado. Vuelve a pedir el código.');
-    }
-
-    // Verifica que la entry exista y haya sido usada (consumida en el paso 2).
-    const entry = await prisma.passwordResetCode.findUnique({ where: { id: payload.id } });
-    if (!entry || entry.email !== payload.email || !entry.used) {
-      return badRequest(res, 'Token inválido. Repite el proceso.');
-    }
-
-    // Buscar al user en nuestra DB para tener el id de Supabase Auth.
-    const user = await prisma.user.findUnique({ where: { email: payload.email } });
-    if (!user) {
-      // Por seguridad, no leakear que no existe — pero tampoco hacer nada.
-      return ok(res, null, 'Contraseña actualizada');
-    }
-
-    // Cambiar password usando el admin API de Supabase.
-    const { error } = await supabase.auth.admin.updateUserById(user.id, {
-      password: parsed.data.newPassword,
-    });
-    if (error) {
-      console.error('[auth/reset-password] Supabase admin error:', error);
-      return badRequest(res, 'No se pudo actualizar la contraseña: ' + error.message);
-    }
-
-    // Borra todos los códigos de este email para limpieza (opcional pero higiénico).
-    await prisma.passwordResetCode.deleteMany({ where: { email: payload.email } });
-
-    return ok(res, null, 'Contraseña actualizada con éxito');
-  } catch (e) {
-    console.error('[auth/reset-password]', e);
     return serverError(res);
   }
 });
