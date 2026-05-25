@@ -40,6 +40,22 @@ model Business {
   @@map("businesses")
 }
 
+// ─── Administradores del SaaS (Genimatech) ────────────────────────────────────
+// Separado del User normal porque tiene un dominio distinto: no pertenece a un
+// Business, ve la app desde el lado de la plataforma. Login propio con
+// email+password (bcrypt), JWT con audience 'admin'.
+model Admin {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+
+  @@map("admins")
+}
+
 // ─── Reset password: códigos de 6 dígitos por email ───────────────────────────
 // Genera un código numérico que expira en 15 min. Cuando el usuario verifica,
 // marcamos `used=true` y devolvemos un short-lived token para que pueda cambiar

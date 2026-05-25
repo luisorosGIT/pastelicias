@@ -135,6 +135,13 @@ export const APP_ROUTES: Routes = [
     ],
   },
 
+  // ─── Panel admin del SaaS (auth propia, separada del business owner) ─────
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+
   // ─── Fallback: cualquier ruta no encontrada → página 404 ─────────────────
   {
     path: '**',

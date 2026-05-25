@@ -15,13 +15,17 @@ import reportsRoutes from './reports.routes';
 import settingsRoutes from './settings.routes';
 import dashboardRoutes from './dashboard.routes';
 import supportRoutes, { supportAdminRouter } from './support.routes';
+import adminRoutes from './admin.routes';
 
 const router = Router();
 
 // Rutas públicas (no requieren JWT)
 router.use('/auth', authRoutes);
-// Admin de soporte: protegido por X-Admin-Secret header, no por JWT.
+// Admin de soporte legacy: protegido por X-Admin-Secret header, no por JWT.
 router.use('/support-admin', supportAdminRouter);
+// Panel admin del SaaS — tiene su propia auth (JWT con audience='admin'), por
+// eso se monta ANTES del authMiddleware/branchMiddleware que son para users.
+router.use('/admin', adminRoutes);
 
 // Rutas protegidas — todas pasan por authMiddleware + branchMiddleware
 router.use(authMiddleware as any);
