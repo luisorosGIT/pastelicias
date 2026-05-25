@@ -35,9 +35,9 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
  *  bajar a la sección de Historial. */
 const DELIVERY_KEEP_HOURS = 24;
 
-/** Cuántas tarjetas puede tener una columna en modo cómodo antes de
- *  cambiar a modo compacto (con expandir individual). */
-const COMPACT_THRESHOLD = 3;
+/** A partir de cuántas tarjetas la columna entra en modo compacto (con
+ *  expandir individual). 3+ = compacto, 1-2 = normal. */
+const COMPACT_THRESHOLD = 2;
 
 @Component({
   selector: 'app-reservations',
@@ -279,7 +279,7 @@ const COMPACT_THRESHOLD = 3;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 8px 12px;
+      padding: 10px 12px;
       background: transparent;
       border: none;
       border-radius: inherit;
@@ -288,7 +288,8 @@ const COMPACT_THRESHOLD = 3;
       font-family: inherit;
       transition: background 0.15s ease;
     }
-    .compact-row:hover { background: rgba(99, 102, 241, 0.08); }
+    .compact-row:hover { background: rgba(99, 102, 241, 0.1); }
+    .compact-row:hover .compact-chevron { color: #4F46E5; }
     .compact-main {
       flex: 1;
       min-width: 0;
@@ -297,7 +298,7 @@ const COMPACT_THRESHOLD = 3;
       gap: 2px;
     }
     .compact-main strong {
-      font-size: 13px;
+      font-size: 13.5px;
       color: #1E293B;
       white-space: nowrap;
       overflow: hidden;
@@ -313,17 +314,24 @@ const COMPACT_THRESHOLD = 3;
     .compact-right {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       flex-shrink: 0;
     }
     .compact-total {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
       color: #4F46E5;
     }
     .compact-chevron {
-      font-size: 18px; width: 18px; height: 18px;
+      font-size: 22px; width: 22px; height: 22px;
       color: #94A3B8;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 50%;
+      padding: 2px;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+    .compact-row:hover .compact-chevron {
+      background: rgba(79, 70, 229, 0.12);
     }
 
     /* ─── Botón colapsar en modo expandido (cuando estamos en col compacta) ─── */
