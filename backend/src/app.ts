@@ -15,12 +15,37 @@ app.use(sentryRequestHandler());
 // ─── Seguridad y utilidades ───────────────────────────────────────────────────
 app.use(helmet());
 app.use(morgan('dev'));
+
+// ─── CORS ─────────────────────────────────────────────────────────────────────
+// Aceptamos los dominios oficiales del frontend + cualquier URL configurada en
+// FRONTEND_URL + cualquier *.vercel.app del proyecto (para preview deployments)
+// + localhost para dev. Esto evita el bug de "se renombró el proyecto y CORS
+// quedó con la URL vieja".
+const ALLOWED_ORIGINS = new Set(
+  [
+    'https://genimatech.vercel.app',
+    'https://pastelicias-vert.vercel.app',
+    'http://localhost:4200',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean) as string[]
+);
+const ALLOWED_VERCEL_PROJECT_PREFIX = 'https://genimatech-'; // preview URLs como
+                                                            // genimatech-xxxxxx-luisorosgits-projects.vercel.app
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+    origin: (origin, callback) => {
+      // Same-origin / curl / server-to-server → sin Origin → permitir.
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.has(origin)) return callback(null, true);
+      if (origin.startsWith(ALLOWED_VERCEL_PROJECT_PREFIX)) return callback(null, true);
+      // Cualquier otro: rechazar.
+      console.warn('[CORS] origen bloqueado:', origin);
+      return callback(new Error('CORS not allowed'), false);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Secret'],
   })
 );
 app.use(express.json());
