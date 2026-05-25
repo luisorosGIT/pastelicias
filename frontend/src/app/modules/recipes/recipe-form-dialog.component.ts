@@ -594,7 +594,7 @@ export class RecipeFormDialogComponent implements OnInit {
     return UNIT_SHORT_UTIL[u];
   }
 
-  /** Label para el dropdown — para unidades de cocina muestra "1 cucharada (15 ml)". */
+  /** Label para el dropdown — ej: "1 cucharada (15 ml · 15 g)". */
   unitLabel(u: BomUnit): string {
     return bomUnitLabel(u);
   }

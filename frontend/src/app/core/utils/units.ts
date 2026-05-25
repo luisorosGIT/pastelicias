@@ -219,10 +219,18 @@ export function isApproximate(fromUnit: BomUnit, ingredientBaseUnit: MeasureUnit
   return isCookingUnit(fromUnit) && (ingredientBaseUnit === 'G' || ingredientBaseUnit === 'KG');
 }
 
-/** Label legible para el dropdown — incluye el equivalente en ml para cooking units. */
+/**
+ * Label legible para el dropdown — incluye el equivalente en ml y gramos para
+ * cooking units. Usamos la aproximación 1 ml ≈ 1 g (densidad del agua), que
+ * es la misma que el sistema usa internamente al convertir a la base.
+ *
+ * Ej: "1/4 taza (60 ml · 60 g)"
+ *     "1 cucharada (15 ml · 15 g)"
+ */
 export function bomUnitLabel(u: BomUnit): string {
   if (isCookingUnit(u)) {
-    return `${COOKING_UNITS[u].label} (${COOKING_UNITS[u].ml} ml)`;
+    const ml = COOKING_UNITS[u].ml;
+    return `${COOKING_UNITS[u].label} (${ml} ml · ${ml} g)`;
   }
   return `${UNIT_LONG[u]} (${UNIT_SHORT[u]})`;
 }
