@@ -258,10 +258,13 @@ router.post('/forgot-password', async (req: Request, res: Response) => {
         },
       });
 
-      // Disparamos el email sin esperar — si falla, el user puede pedir otro código.
-      sendPasswordResetEmail(email, code).catch((e) =>
-        console.error('[forgot-password] email send failed:', e)
-      );
+      // IMPORTANTE: esperamos el envío. En serverless (Vercel) si no awaitamos,
+      // la función puede terminar y matar la promesa antes de que loguee/envíe.
+      try {
+        await sendPasswordResetEmail(email, code);
+      } catch (e) {
+        console.error('[forgot-password] email send failed:', e);
+      }
     }
 
     return ok(
