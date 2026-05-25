@@ -216,6 +216,27 @@ export interface PlanInfo {
   limits: PlanLimits;
 }
 
+// ─── Chat de soporte ──────────────────────────────────────────────────────────
+export interface SupportMessage {
+  id: string;
+  conversationId: string;
+  senderRole: 'USER' | 'ADMIN';
+  senderName: string | null;
+  content: string;
+  isReadByUser: boolean;
+  isReadByAdmin: boolean;
+  createdAt: string;
+}
+
+export interface SupportConversation {
+  id: string;
+  businessId: string;
+  userId: string;
+  status: 'OPEN' | 'CLOSED';
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PlanState extends PlanInfo {
   usage: PlanUsage;
   allPlans: PlanInfo[];

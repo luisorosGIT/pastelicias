@@ -62,7 +62,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="field">
               <div class="field-row">
                 <label for="password">Contraseña</label>
-                <a class="forgot" (click)="comingSoon('Recuperar contraseña')">
+                <a class="forgot" routerLink="/auth/forgot-password">
                   ¿Olvidaste tu contraseña?
                 </a>
               </div>

@@ -9,6 +9,7 @@ import { BranchService } from '../../../core/services/branch.service';
 import { SettingsService } from '../../../core/services/settings.service';
 import { PlanService } from '../../../core/services/plan.service';
 import { BranchSelectorComponent } from '../branch-selector/branch-selector.component';
+import { ChatWidgetComponent } from '../chat-widget/chat-widget.component';
 import { Role } from '../../../core/models';
 
 interface NavItem {
@@ -35,7 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   imports: [
     RouterOutlet, RouterLink, RouterLinkActive,
     MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule,
-    BranchSelectorComponent,
+    BranchSelectorComponent, ChatWidgetComponent,
   ],
   template: `
     <div class="layout">
@@ -134,6 +135,9 @@ const NAV_ITEMS: NavItem[] = [
           <router-outlet />
         </main>
       </div>
+
+      <!-- Chat widget flotante (solo visible para OWNER) -->
+      <app-chat-widget />
     </div>
   `,
   styles: [`

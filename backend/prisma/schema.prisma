@@ -35,8 +35,64 @@ model Business {
 
   branches Branch[]
   users    User[]
+  supportConversations SupportConversation[]
 
   @@map("businesses")
+}
+
+// ─── Reset password: códigos de 6 dígitos por email ───────────────────────────
+// Genera un código numérico que expira en 15 min. Cuando el usuario verifica,
+// marcamos `used=true` y devolvemos un short-lived token para que pueda cambiar
+// su password en la siguiente request. No hay relación con User porque puede
+// pedirse reset incluso si el email no existe (no leakeamos esa info).
+model PasswordResetCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String   // 6 dígitos numéricos
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email, used])
+  @@index([expiresAt])
+  @@map("password_reset_codes")
+}
+
+// ─── Chat de soporte (Pro / Business) ─────────────────────────────────────────
+// Una conversación por business. Mensajes de usuarios y respuestas del admin
+// (Genimatech). Mientras no hay panel admin, las respuestas se hacen via
+// inserción manual en la tabla o un endpoint protegido por env var.
+model SupportConversation {
+  id         String   @id @default(uuid())
+  businessId String
+  userId     String   // el OWNER que abrió el chat
+  status     String   @default("OPEN") // OPEN | CLOSED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business Business         @relation(fields: [businessId], references: [id])
+  user     User             @relation(fields: [userId], references: [id])
+  messages SupportMessage[]
+
+  @@index([businessId])
+  @@index([status])
+  @@map("support_conversations")
+}
+
+model SupportMessage {
+  id             String   @id @default(uuid())
+  conversationId String
+  senderRole     String   // USER | ADMIN
+  senderName     String?  // nombre visible (opcional)
+  content        String   @db.Text
+  isReadByUser   Boolean  @default(false) // true cuando el OWNER ya leyó (solo aplica a mensajes ADMIN)
+  isReadByAdmin  Boolean  @default(false) // true cuando admin ya leyó (solo aplica a mensajes USER)
+  createdAt      DateTime @default(now())
+
+  conversation SupportConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("support_messages")
 }
 
 // ─── Sucursal ─────────────────────────────────────────────────────────────────
@@ -75,6 +131,7 @@ model User {
   business Business @relation(fields: [businessId], references: [id])
   branch   Branch?  @relation(fields: [branchId], references: [id])
   sales    Sale[]
+  supportConversations SupportConversation[]
 
   @@map("users")
 }

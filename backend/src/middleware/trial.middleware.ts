@@ -38,6 +38,7 @@ const EXEMPT_PATHS = [
   '/settings/upgrade',
   '/settings/plan',
   '/settings/business',
+  '/support', // chat de soporte: el endpoint hace su propio check de plan
 ];
 
 export async function blockIfTrialExpired(

@@ -14,11 +14,14 @@ import productionRoutes from './production.routes';
 import reportsRoutes from './reports.routes';
 import settingsRoutes from './settings.routes';
 import dashboardRoutes from './dashboard.routes';
+import supportRoutes, { supportAdminRouter } from './support.routes';
 
 const router = Router();
 
 // Rutas públicas (no requieren JWT)
 router.use('/auth', authRoutes);
+// Admin de soporte: protegido por X-Admin-Secret header, no por JWT.
+router.use('/support-admin', supportAdminRouter);
 
 // Rutas protegidas — todas pasan por authMiddleware + branchMiddleware
 router.use(authMiddleware as any);
@@ -39,5 +42,6 @@ router.use('/production', productionRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/support', supportRoutes);
 
 export default router;
