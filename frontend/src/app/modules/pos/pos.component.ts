@@ -18,6 +18,7 @@ import { BranchService } from '../../core/services/branch.service';
 import { AuthService } from '../../core/services/auth.service';
 import { TicketDialogComponent } from './ticket-dialog.component';
 import { Recipe, RecipeCategory, PaymentMethod, SaleType } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 interface CartLine {
   recipe: Recipe;
@@ -753,7 +754,7 @@ export class PosComponent implements OnInit {
       // Recargar recetas para refrescar disponibilidad
       await this.recipes.load();
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error en la venta', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error en la venta'), 'OK', { duration: 4000 });
     } finally {
       this.processing.set(false);
     }

@@ -18,6 +18,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
 import { BranchFormDialogComponent } from './branch-form-dialog.component';
 import { UserInviteDialogComponent, UserFormResult } from './user-invite-dialog.component';
 import { Branch, PlanCode, Role, User } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 const ROLE_LABELS: Record<Role, string> = {
   OWNER: 'Propietario',
@@ -661,7 +662,7 @@ export class SettingsComponent implements OnInit {
       });
       this.snack.open('Permisos actualizados', 'OK', { duration: 2000 });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.savingPermissions.set(false);
     }
@@ -689,7 +690,7 @@ export class SettingsComponent implements OnInit {
           this.snack.open('Sucursal creada', 'OK', { duration: 2500 });
         }
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -719,7 +720,7 @@ export class SettingsComponent implements OnInit {
         await this.settings.removeBranch(b.id);
         this.snack.open(`Sucursal "${b.name}" eliminada permanentemente`, 'OK', { duration: 3000 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -740,7 +741,7 @@ export class SettingsComponent implements OnInit {
       await this.settings.updateBusiness(payload);
       this.snack.open('Configuración guardada', 'OK', { duration: 2500 });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.savingBusiness.set(false);
     }
@@ -759,7 +760,7 @@ export class SettingsComponent implements OnInit {
         await this.settings.inviteUser(res.payload);
         this.snack.open(`Usuario ${res.payload.fullName} creado`, 'OK', { duration: 3000 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -776,7 +777,7 @@ export class SettingsComponent implements OnInit {
         await this.settings.updateUser(user.id, res.payload);
         this.snack.open('Usuario actualizado', 'OK', { duration: 2500 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -797,7 +798,7 @@ export class SettingsComponent implements OnInit {
         await this.settings.deactivateUser(u.id);
         this.snack.open('Usuario desactivado', 'OK', { duration: 2500 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -807,7 +808,7 @@ export class SettingsComponent implements OnInit {
       await this.settings.reactivateUser(u.id);
       this.snack.open('Usuario reactivado', 'OK', { duration: 2500 });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     }
   }
 

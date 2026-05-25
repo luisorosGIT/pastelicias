@@ -21,6 +21,7 @@ import { BranchService } from '../../core/services/branch.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { Ingredient, MeasureUnit } from '../../core/models';
 import { formatStockBreakdown } from '../../core/utils/units';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 type IngredientRow = Ingredient & { branch?: { id: string; name: string } | null };
 
@@ -435,7 +436,7 @@ export class InventoryComponent implements OnInit {
     try {
       await this.inventoryService.load();
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error al cargar inventario', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error al cargar inventario'), 'OK', { duration: 4000 });
     }
   }
 
@@ -509,7 +510,7 @@ export class InventoryComponent implements OnInit {
           this.snack.open('Insumo creado', 'OK', { duration: 2500 });
         }
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -531,7 +532,7 @@ export class InventoryComponent implements OnInit {
         await this.inventoryService.remove(i.id);
         this.snack.open('Insumo eliminado', 'OK', { duration: 2500 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }

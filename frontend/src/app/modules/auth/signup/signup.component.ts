@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth.service';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 /**
  * SignUp adaptado al diseño Figma.
@@ -535,7 +536,7 @@ export class SignupComponent {
     try {
       await this.authService.signup(this.form.value);
     } catch (err: unknown) {
-      this.errorMessage.set(err instanceof Error ? err.message : 'Error al crear cuenta');
+      this.errorMessage.set(getErrorMessage(err, 'Error al crear cuenta'));
     } finally {
       this.loading.set(false);
     }

@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlanService } from '../../core/services/plan.service';
 import { PlanCode } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 /**
  * Página comparativa de planes. Permite cambiar de plan (mock — sin pago aún).
@@ -300,7 +301,7 @@ export class UpgradeComponent implements OnInit {
       this.snack.open(`✓ Plan cambiado a ${label}`, 'OK', { duration: 3500 });
       this.router.navigate(['/app/settings']);
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 5000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 5000 });
     } finally {
       this.changing.set(null);
     }

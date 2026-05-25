@@ -18,6 +18,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { KpiCardComponent } from '../../shared/components/kpi-card/kpi-card.component';
 import { MeasureUnit, WasteReason, WasteType } from '../../core/models';
 import { compatibleUnits, convert, UNIT_SHORT as UNIT_SHORT_UTIL } from '../../core/utils/units';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 const WASTE_REASON_LABELS: Record<WasteReason, string> = {
   EXPIRY: 'Caducidad / Vencimiento',
@@ -888,7 +889,7 @@ export class ProductionComponent implements OnInit {
       this.snack.open('Producción registrada con éxito.', 'OK', { duration: 3000 });
       this.prodForm.reset({ recipeId: '', quantity: 1, notes: '' });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.submittingProd.set(false);
     }
@@ -925,7 +926,7 @@ export class ProductionComponent implements OnInit {
       );
       this.resaleForm.patchValue({ quantity: 1, unitCost: 0, notes: '' });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.submittingResale.set(false);
     }
@@ -969,7 +970,7 @@ export class ProductionComponent implements OnInit {
       // KPIs de merma sí los pedimos al backend porque dependen de cálculos del servidor.
       await this.production.loadWasteKpis(this.kpiFilter());
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.submittingWaste.set(false);
     }

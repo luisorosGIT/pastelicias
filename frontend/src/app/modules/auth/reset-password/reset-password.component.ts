@@ -6,6 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '@env/environment';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 /**
  * Página de aterrizaje del link de recovery de Supabase.
@@ -441,7 +442,7 @@ export class ResetPasswordComponent implements OnInit {
       this.snack.open('✓ Contraseña actualizada. Inicia sesión.', 'OK', { duration: 5000 });
       this.router.navigate(['/auth/login']);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'No pudimos actualizar la contraseña.';
+      const msg = getErrorMessage(err, 'No pudimos actualizar la contraseña.');
       this.errorMessage.set(msg);
     } finally {
       this.saving.set(false);

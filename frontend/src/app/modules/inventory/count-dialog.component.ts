@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Ingredient, MeasureUnit } from '../../core/models';
 import { compatibleUnits, convert, UNIT_SHORT as UNIT_SHORT_UTIL, UNIT_LONG } from '../../core/utils/units';
+import { getErrorMessage } from '../../core/utils/error-message';
 import {
   InventoryCountsService,
   CountPayload,
@@ -482,7 +483,7 @@ export class CountDialogComponent implements OnInit {
       this.snack.open(msg, 'OK', { duration: 3500 });
       this.dialogRef.close(true);
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }

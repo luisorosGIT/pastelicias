@@ -18,6 +18,7 @@ import { SettingsService } from '../../core/services/settings.service';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
 import { RecipeFormDialogComponent } from './recipe-form-dialog.component';
 import { MeasureUnit, Recipe, RecipeCategory } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 const UNIT_SHORT: Record<MeasureUnit, string> = {
   KG: 'kg', G: 'g', L: 'l', ML: 'ml', UNIT: 'unidad',
@@ -571,7 +572,7 @@ export class RecipesComponent implements OnInit {
           this.snack.open('Producto creado', 'OK', { duration: 2500 });
         }
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }
@@ -593,7 +594,7 @@ export class RecipesComponent implements OnInit {
         await this.recipes.remove(r.id);
         this.snack.open('Producto eliminado', 'OK', { duration: 2500 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }

@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../core/services/auth.service';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 /**
  * Login adaptado al diseño Figma.
@@ -476,7 +477,7 @@ export class LoginComponent {
     try {
       await this.authService.login(this.form.value.email, this.form.value.password);
     } catch (err: unknown) {
-      this.errorMessage.set(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      this.errorMessage.set(getErrorMessage(err, 'Error al iniciar sesión'));
     } finally {
       this.loading.set(false);
     }

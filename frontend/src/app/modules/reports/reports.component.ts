@@ -11,6 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { InventoryService } from '../../core/services/inventory.service';
 import { KpiCardComponent } from '../../shared/components/kpi-card/kpi-card.component';
 import { DateFilter } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 @Component({
   selector: 'app-reports',
@@ -780,7 +781,7 @@ export class ReportsComponent implements OnInit {
       await this.reports.exportCsv(this.filter());
       this.snack.open('Reporte CSV generado', 'OK', { duration: 2500 });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.downloading.set(false);
     }

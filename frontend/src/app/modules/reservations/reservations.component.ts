@@ -12,6 +12,7 @@ import { BranchService } from '../../core/services/branch.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ReservationFormDialogComponent } from './reservation-form-dialog.component';
 import { Reservation, ReservationStatus } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 interface KanbanColumn {
   status: ReservationStatus;
@@ -299,7 +300,7 @@ export class ReservationsComponent implements OnInit {
       await this.reservations.updateStatus(r.id, next);
       this.snack.open(`Reservación movida a ${this.labelOf(next)}`, 'OK', { duration: 2500 });
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     }
   }
 
@@ -328,7 +329,7 @@ export class ReservationsComponent implements OnInit {
         await this.reservations.create(payload);
         this.snack.open('Reservación creada', 'OK', { duration: 2500 });
       } catch (e: unknown) {
-        this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+        this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
       }
     });
   }

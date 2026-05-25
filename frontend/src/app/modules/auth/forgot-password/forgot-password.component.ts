@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment';
+import { getErrorMessage } from '../../../core/utils/error-message';
 
 /**
  * Flujo de recuperación de contraseña — versión Supabase Auth.
@@ -388,6 +389,6 @@ export class ForgotPasswordComponent {
       const body = (err as { error?: { error?: string; message?: string } }).error;
       return body?.error ?? body?.message ?? 'No pudimos enviar el enlace. Intenta de nuevo.';
     }
-    return err instanceof Error ? err.message : 'No pudimos enviar el enlace. Intenta de nuevo.';
+    return getErrorMessage(err, 'No pudimos enviar el enlace. Intenta de nuevo.');
   }
 }

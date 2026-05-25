@@ -18,6 +18,7 @@ import { InventoryService, IngredientPayload } from '../../core/services/invento
 import { BranchService } from '../../core/services/branch.service';
 import { ApiResponse, MeasureUnit } from '../../core/models';
 import { homePathForRole } from '../../core/utils/home-path';
+import { getErrorMessage } from '../../core/utils/error-message';
 
 /**
  * Wizard de onboarding en 3 pasos. Se muestra al OWNER después del signup hasta
@@ -369,7 +370,7 @@ export class OnboardingComponent implements OnInit {
       await this.settings.updateBusiness(payload);
       this.step.set(2);
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }
@@ -389,7 +390,7 @@ export class OnboardingComponent implements OnInit {
       await this.settings.updateBranch(branchId, payload);
       this.step.set(3);
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }
@@ -414,7 +415,7 @@ export class OnboardingComponent implements OnInit {
       await this.inventory.create(payload);
       await this.completeAndRedirect();
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }
@@ -426,7 +427,7 @@ export class OnboardingComponent implements OnInit {
     try {
       await this.completeAndRedirect();
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }
@@ -438,7 +439,7 @@ export class OnboardingComponent implements OnInit {
     try {
       await this.completeAndRedirect();
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }

@@ -10,6 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Ingredient, MeasureUnit } from '../../core/models';
+import { getErrorMessage } from '../../core/utils/error-message';
 import {
   PurchasesService,
   PurchasePayload,
@@ -377,7 +378,7 @@ export class PurchaseDialogComponent implements OnInit {
       this.snack.open(`Compra registrada. Nuevo CPP: S/ ${newCpp} por presentación.`, 'OK', { duration: 4000 });
       this.dialogRef.close(true);
     } catch (e: unknown) {
-      this.snack.open(e instanceof Error ? e.message : 'Error', 'OK', { duration: 4000 });
+      this.snack.open(getErrorMessage(e, 'Error'), 'OK', { duration: 4000 });
     } finally {
       this.saving.set(false);
     }
