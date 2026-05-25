@@ -1,7 +1,8 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '@env/environment';
 import { AuthSession, SignupPayload, User, ApiResponse } from '../models';
 import { homePathForRole } from '../utils/home-path';
@@ -23,7 +24,66 @@ export class AuthService {
   readonly branchId = computed(() => this._session()?.user.branchId ?? null);
   readonly onboardingCompleted = this._onboardingCompleted.asReadonly();
 
+  /** Cliente Supabase para auth flow OAuth. No persiste sesión en localStorage
+   *  (lo manejamos nosotros via TOKEN_KEY) — solo lo usamos para signInWithOAuth
+   *  y setSession durante el callback. */
+  private supabase: SupabaseClient = createClient(
+    environment.supabaseUrl,
+    environment.supabaseAnonKey,
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+  );
+
   constructor(private http: HttpClient, private router: Router) {}
+
+  /** Inicia el flow OAuth con Google. Redirige a Google y, tras autorizar,
+   *  vuelve a /auth/callback con los tokens en el hash. */
+  async loginWithGoogle(): Promise<void> {
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    const { error } = await this.supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo },
+    });
+    if (error) throw new Error(error.message);
+    // Aquí no llegamos — el navegador ya está navegando a Google.
+  }
+
+  /** Llamado desde la página /auth/callback. Recibe los tokens del fragment
+   *  de la URL, valida con Supabase y luego con nuestro backend para
+   *  crear/recuperar el Business + Branch + User. */
+  async completeOAuthCallback(accessToken: string, refreshToken: string): Promise<{ isNewUser: boolean }> {
+    // 1. Establecer la sesión en el cliente Supabase para que getUser funcione.
+    const { error: setError } = await this.supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    if (setError) throw new Error(setError.message);
+
+    // 2. Llamar al backend con el accessToken como Bearer
+    const headers = new HttpHeaders({ Authorization: `Bearer ${accessToken}` });
+    const res = await firstValueFrom(
+      this.http.post<ApiResponse<{
+        user: User;
+        business: { id: string; name: string; onboardingCompleted: boolean };
+        branch: { id: string; name: string };
+        isNewUser: boolean;
+      }>>(`${environment.apiUrl}/auth/oauth-bootstrap`, {}, { headers })
+    );
+    if (!res.success || !res.data) throw new Error(res.error ?? 'Error al iniciar sesión con Google');
+
+    // 3. Guardar como sesión nuestra (igual que login/signup normal)
+    const session: AuthSession = {
+      accessToken,
+      refreshToken,
+      user: res.data.user,
+      business: res.data.business,
+    };
+    this.saveSession(session);
+    this._session.set(session);
+    const onboardingDone = res.data.business.onboardingCompleted;
+    this.setOnboardingCompleted(onboardingDone);
+
+    return { isNewUser: res.data.isNewUser };
+  }
 
   async login(email: string, password: string): Promise<void> {
     const res = await firstValueFrom(

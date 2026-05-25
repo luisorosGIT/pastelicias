@@ -22,4 +22,9 @@ export const AUTH_ROUTES: Routes = [
     loadComponent: () =>
       import('./reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
   },
+  {
+    path: 'callback',
+    loadComponent: () =>
+      import('./callback/callback.component').then((m) => m.AuthCallbackComponent),
+  },
 ];

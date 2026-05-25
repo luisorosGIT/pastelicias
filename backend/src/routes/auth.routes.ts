@@ -216,6 +216,111 @@ router.post('/refresh', async (req: Request, res: Response) => {
   }
 });
 
+// ─── OAuth (Google) bootstrap ─────────────────────────────────────────────────
+// Tras un sign-in OAuth de Supabase, el cliente recibe un access_token en el
+// fragment de la URL. Llama a este endpoint con su Bearer token para:
+//   1. Verificar el token contra Supabase
+//   2. Si ya existe en prisma.user → devolver perfil + business + branch
+//   3. Si NO existe → crear Business + Branch + User automáticamente con
+//      plan FREE + trial 30 días y onboardingCompleted=false (va a /onboarding)
+//
+// El user no usa contraseña — el login se hará siempre via Google.
+router.post('/oauth-bootstrap', async (req: Request, res: Response) => {
+  try {
+    // Validar el Bearer token con Supabase
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    if (!token) return badRequest(res, 'Token de OAuth requerido');
+
+    const { data: authData, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !authData.user) {
+      return badRequest(res, 'Token inválido o expirado');
+    }
+    const authUser = authData.user;
+    const email = (authUser.email || '').toLowerCase().trim();
+    if (!email) {
+      return badRequest(res, 'No se pudo leer el email del proveedor OAuth');
+    }
+
+    // ¿Existe en nuestra DB?
+    const existing = await prisma.user.findUnique({
+      where: { id: authUser.id },
+      include: {
+        business: { select: { id: true, name: true, onboardingCompleted: true } },
+        branch: { select: { id: true, name: true } },
+      },
+    });
+
+    if (existing) {
+      return ok(res, {
+        user: {
+          id: existing.id,
+          email: existing.email,
+          fullName: existing.fullName,
+          role: existing.role,
+          businessId: existing.businessId,
+          branchId: existing.branchId,
+        },
+        business: existing.business,
+        branch: existing.branch,
+        isNewUser: false,
+      }, 'Sesión iniciada');
+    }
+
+    // No existe — primer login OAuth. Crear Business + Branch + User.
+    const fullName =
+      (authUser.user_metadata?.['full_name'] as string | undefined) ||
+      (authUser.user_metadata?.['name'] as string | undefined) ||
+      email.split('@')[0];
+    // Usamos el nombre del user como nombre temporal del business — lo
+    // editará en el wizard de onboarding después.
+    const businessName = `Pastelería de ${fullName.split(' ')[0]}`;
+
+    const result = await prisma.$transaction(async (tx) => {
+      const trialEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      const business = await tx.business.create({
+        data: { name: businessName, taxRate: 18, trialEndsAt },
+      });
+      const branch = await tx.branch.create({
+        data: { businessId: business.id, name: 'Sucursal Principal', isActive: true },
+      });
+      const user = await tx.user.create({
+        data: {
+          id: authUser.id, // mismo id que en Supabase Auth
+          email,
+          fullName,
+          role: 'OWNER',
+          businessId: business.id,
+          branchId: null,
+          isActive: true,
+        },
+      });
+      return { business, branch, user };
+    });
+
+    return ok(res, {
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        fullName: result.user.fullName,
+        role: result.user.role,
+        businessId: result.user.businessId,
+        branchId: result.user.branchId,
+      },
+      business: {
+        id: result.business.id,
+        name: result.business.name,
+        onboardingCompleted: result.business.onboardingCompleted,
+      },
+      branch: { id: result.branch.id, name: result.branch.name },
+      isNewUser: true,
+    }, 'Cuenta creada vía Google');
+  } catch (e) {
+    console.error('[auth/oauth-bootstrap]', e);
+    return serverError(res);
+  }
+});
+
 // ─── Reset password con Supabase Auth ─────────────────────────────────────────
 // Usa el flujo built-in de Supabase: el user pone email → Supabase manda un
 // email con link de recovery → user clickea → frontend recibe el token en el

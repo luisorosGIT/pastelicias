@@ -172,6 +172,24 @@ import { getErrorMessage } from '../../../core/utils/error-message';
               }
             </button>
 
+            <div class="divider"><span>o</span></div>
+
+            <button type="button" class="google-btn"
+                    [disabled]="googleLoading()"
+                    (click)="signupWithGoogle()">
+              @if (googleLoading()) {
+                <mat-spinner diameter="20" />
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20" height="20">
+                  <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                  <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                  <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.2 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+                  <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.6l6.2 5.2C41.4 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+                </svg>
+                <span>Continuar con Google</span>
+              }
+            </button>
+
             <p class="legal-note">
               Al crear cuenta aceptas nuestros
               <a (click)="comingSoon('Términos de servicio')">Términos de Servicio</a> y
@@ -472,6 +490,42 @@ import { getErrorMessage } from '../../../core/utils/error-message';
     }
     .submit-btn .arrow { font-size: 18px; width: 18px; height: 18px; }
 
+    /* ─── Divider "o" ─── */
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 16px 0 8px;
+      color: #94a3b8;
+      font-size: 12px; font-weight: 600;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: #e5e7eb;
+    }
+
+    /* ─── Botón Google OAuth ─── */
+    .google-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px;
+      width: 100%;
+      height: 50px;
+      background: #fff;
+      color: #1f2937;
+      border: 1.5px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .google-btn:hover:not(:disabled) {
+      background: #f9fafb;
+      border-color: #9ca3af;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .google-btn svg { flex-shrink: 0; }
+
     .legal-note {
       text-align: center;
       color: #6b7280;
@@ -504,6 +558,7 @@ import { getErrorMessage } from '../../../core/utils/error-message';
 export class SignupComponent {
   form: FormGroup;
   loading = signal(false);
+  googleLoading = signal(false);
   showPassword = signal(false);
   errorMessage = signal('');
 
@@ -544,5 +599,18 @@ export class SignupComponent {
 
   comingSoon(featureName: string): void {
     this.snack.open(`${featureName} — disponible pronto.`, 'OK', { duration: 4000 });
+  }
+
+  async signupWithGoogle(): Promise<void> {
+    this.googleLoading.set(true);
+    this.errorMessage.set('');
+    try {
+      await this.authService.loginWithGoogle();
+      // Tras esto el browser navega a Google; el callback se encargará
+      // de crear el Business + Branch + User si es la primera vez.
+    } catch (err: unknown) {
+      this.googleLoading.set(false);
+      this.errorMessage.set(err instanceof Error ? err.message : 'No pudimos conectar con Google.');
+    }
   }
 }

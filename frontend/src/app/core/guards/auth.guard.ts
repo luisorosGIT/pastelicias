@@ -29,10 +29,19 @@ export const authGuard: CanActivateFn = (_route, _state) => {
 /**
  * Guard de rutas públicas (landing, login, signup): si ya está autenticado,
  * lo manda a su home (o al onboarding si está pendiente).
+ *
+ * Excepciones: rutas de "transición" como el callback de OAuth o reset-password
+ * que SIEMPRE deben poder cargarse (el componente decide qué hacer con la sesión).
  */
-export const guestGuard: CanActivateFn = (_route, _state) => {
+const ALWAYS_PASS_PATHS = ['/auth/callback', '/auth/reset-password'];
+
+export const guestGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+
+  // Rutas de transición (callback OAuth, reset password con link de email)
+  // siempre se renderizan, sin importar si hay sesión.
+  if (ALWAYS_PASS_PATHS.some((p) => state.url.startsWith(p))) return true;
 
   if (!authService.isAuthenticated()) return true;
 
