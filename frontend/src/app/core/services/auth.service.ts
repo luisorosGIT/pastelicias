@@ -6,6 +6,14 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '@env/environment';
 import { AuthSession, SignupPayload, User, ApiResponse } from '../models';
 import { homePathForRole } from '../utils/home-path';
+import { AdminAuthService, AdminUser } from '../../admin/admin-auth.service';
+
+/** Forma de respuesta del backend cuando el email es de admin. */
+interface AdminLoginResponse {
+  isAdmin: true;
+  adminToken: string;
+  admin: AdminUser;
+}
 
 const TOKEN_KEY = 'pastelicias_token';
 const REFRESH_KEY = 'pastelicias_refresh';
@@ -33,7 +41,11 @@ export class AuthService {
     { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
   );
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private adminAuth: AdminAuthService,
+  ) {}
 
   /** Inicia el flow OAuth con Google. Redirige a Google y, tras autorizar,
    *  vuelve a /auth/callback con los tokens en el hash. */
@@ -86,17 +98,33 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<void> {
+    // El backend puede devolver dos formas:
+    //  - Admin: { isAdmin: true, adminToken, admin } → guardamos en AdminAuthService
+    //  - User normal: AuthSession con accessToken/user/business
     const res = await firstValueFrom(
-      this.http.post<ApiResponse<AuthSession>>(`${environment.apiUrl}/auth/login`, { email, password })
+      this.http.post<ApiResponse<AuthSession | AdminLoginResponse>>(
+        `${environment.apiUrl}/auth/login`,
+        { email, password }
+      )
     );
 
     if (!res.success || !res.data) throw new Error(res.error ?? 'Error al iniciar sesión');
 
-    this.saveSession(res.data);
-    this._session.set(res.data);
-    const onboardingDone = res.data.business?.onboardingCompleted ?? true;
+    // Caso 1: el email pertenece a un admin del SaaS
+    if ('isAdmin' in res.data && res.data.isAdmin) {
+      const adminRes = res.data;
+      this.adminAuth.persistFromOutside(adminRes.adminToken, adminRes.admin);
+      this.router.navigate(['/admin/dashboard']);
+      return;
+    }
+
+    // Caso 2: user normal de business
+    const session = res.data as AuthSession;
+    this.saveSession(session);
+    this._session.set(session);
+    const onboardingDone = session.business?.onboardingCompleted ?? true;
     this.setOnboardingCompleted(onboardingDone);
-    this.redirectAfterAuth(res.data.user, onboardingDone);
+    this.redirectAfterAuth(session.user, onboardingDone);
   }
 
   /** Crea un nuevo tenant + usuario OWNER + primera sucursal en una sola llamada. */

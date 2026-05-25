@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import bcrypt from 'bcryptjs';
 import prisma from '../services/prisma.service';
 import { ok, badRequest, serverError } from '../utils/response';
+import { signAdminToken } from '../middleware/admin.middleware';
 
 const router = Router();
 
@@ -33,8 +35,36 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     const { email, password } = parsed.data;
+    const emailNorm = email.toLowerCase().trim();
 
-    // Autenticar con Supabase Auth
+    // ─── Detección de admin del SaaS ────────────────────────────────────────
+    // Si el email está en la tabla `admins`, autenticamos contra bcrypt y
+    // devolvemos una respuesta especial con isAdmin: true + adminToken.
+    // El frontend lo detecta y redirige a /admin/dashboard en lugar del flow
+    // normal de business owner.
+    //
+    // Si la password admin no coincide, NO seguimos al flujo Supabase — porque
+    // el email pertenece a un admin (no a un user business). Eso evita que un
+    // admin que olvidó su password se loguee accidentalmente como business owner.
+    const admin = await prisma.admin.findUnique({ where: { email: emailNorm } });
+    if (admin && admin.isActive) {
+      const valid = await bcrypt.compare(password, admin.passwordHash);
+      if (!valid) return badRequest(res, 'Credenciales inválidas');
+
+      prisma.admin.update({
+        where: { id: admin.id },
+        data: { lastLoginAt: new Date() },
+      }).catch(() => {});
+
+      const adminToken = signAdminToken({ id: admin.id, email: admin.email, name: admin.name });
+      return ok(res, {
+        isAdmin: true,
+        adminToken,
+        admin: { id: admin.id, email: admin.email, name: admin.name },
+      }, 'Sesión iniciada como administrador');
+    }
+
+    // Autenticar con Supabase Auth (flujo normal business owner)
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,

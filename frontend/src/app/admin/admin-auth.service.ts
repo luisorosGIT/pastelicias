@@ -80,6 +80,12 @@ export class AdminAuthService {
     this._admin.set(null);
   }
 
+  /** Persiste un admin (token + datos). Usado por persist() interno y por
+   *  AuthService cuando el login unificado detecta que el email es admin. */
+  persistFromOutside(token: string, admin: AdminUser): void {
+    this.persist(token, admin);
+  }
+
   private persist(token: string, admin: AdminUser): void {
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(ADMIN_KEY, JSON.stringify(admin));
