@@ -37,7 +37,7 @@ import { homePathForRole } from '../../core/utils/home-path';
         <!-- Header con progreso -->
         <div class="header">
           <div class="brand">
-            <div class="brand-logo">P</div>
+            <img src="assets/branding/logo.png" alt="Pastelicias" class="brand-logo-img" />
             <span>Pastelicias</span>
           </div>
           <div class="progress">
@@ -229,11 +229,9 @@ import { homePathForRole } from '../../core/utils/home-path';
 
     .header { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-bottom: 32px; }
     .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #4648d4; }
-    .brand-logo {
+    .brand-logo-img {
       width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, #4648d4 0%, #645efb 100%);
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 18px;
+      display: block; object-fit: cover;
     }
     .progress { display: flex; align-items: center; gap: 8px; }
     .step-dot {

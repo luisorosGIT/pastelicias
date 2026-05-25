@@ -29,7 +29,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </a>
 
           <div class="logo-block">
-            <div class="logo"><mat-icon>cake</mat-icon></div>
+            <img src="assets/branding/logo.png" alt="Pastelicias" class="logo-img" />
             <div>
               <h1 class="logo-name gradient-text">Pastelicias</h1>
               <p class="logo-tagline">Sistema de Gestión</p>
@@ -211,14 +211,12 @@ import { AuthService } from '../../../core/services/auth.service';
       display: flex; align-items: center; gap: 12px;
       margin-bottom: 32px;
     }
-    .logo {
+    .logo-img {
       width: 48px; height: 48px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
+      display: block;
+      object-fit: cover;
     }
-    .logo mat-icon { font-size: 26px; width: 26px; height: 26px; }
     .logo-name {
       font-size: 26px;
       font-weight: 800;

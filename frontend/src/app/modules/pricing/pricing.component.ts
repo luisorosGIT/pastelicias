@@ -101,7 +101,7 @@ const PLANS: PublicPlan[] = [
       <nav class="navbar">
         <div class="navbar-inner">
           <a routerLink="/" class="nav-brand">
-            <div class="nav-logo"><mat-icon>cake</mat-icon></div>
+            <img src="assets/branding/logo.png" alt="Pastelicias" class="nav-logo-img" />
             <span class="nav-name">Pastelicias</span>
           </a>
           <div class="nav-menu">
@@ -252,15 +252,13 @@ const PLANS: PublicPlan[] = [
       display: flex; align-items: center; gap: 10px;
       text-decoration: none;
     }
-    .nav-logo {
+    .nav-logo-img {
       width: 40px; height: 40px; border-radius: 12px;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
+      display: block;
+      object-fit: cover;
       transition: transform 0.2s ease;
     }
-    .nav-logo mat-icon { font-size: 22px; width: 22px; height: 22px; }
-    .nav-brand:hover .nav-logo { transform: scale(1.1); }
+    .nav-brand:hover .nav-logo-img { transform: scale(1.1); }
     .nav-name {
       font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
       background: linear-gradient(135deg, #4f46e5, #9333ea);

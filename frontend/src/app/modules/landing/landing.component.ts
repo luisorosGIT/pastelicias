@@ -26,7 +26,7 @@ import { homePathForRole } from '../../core/utils/home-path';
       <nav class="navbar">
         <div class="navbar-inner">
           <a routerLink="/" class="nav-brand">
-            <div class="nav-logo"><mat-icon>cake</mat-icon></div>
+            <img src="assets/branding/logo.png" alt="Pastelicias" class="nav-logo-img" />
             <span class="nav-name">Pastelicias</span>
           </a>
           <div class="nav-menu">
@@ -147,7 +147,7 @@ import { homePathForRole } from '../../core/utils/home-path';
         <div class="cta-card fade-up">
           <div class="cta-pattern"></div>
           <div class="cta-content">
-            <mat-icon class="cta-icon">cake</mat-icon>
+            <img src="assets/branding/logo.png" alt="" class="cta-logo" />
             <h2>¿Listo para empezar?</h2>
             <p>30 días gratis. Sin tarjeta. Sin instalación.</p>
             <a routerLink="/auth/signup" class="btn-light">
@@ -161,7 +161,7 @@ import { homePathForRole } from '../../core/utils/home-path';
       <!-- ─── Footer ─── -->
       <footer class="footer">
         <div class="footer-brand">
-          <div class="nav-logo small"><mat-icon>cake</mat-icon></div>
+          <img src="assets/branding/logo.png" alt="Pastelicias" class="nav-logo-img small" />
           <strong>Pastelicias</strong>
         </div>
         <p>© {{ year }} Pastelicias · Hecho en Perú 🇵🇪</p>
@@ -212,17 +212,14 @@ import { homePathForRole } from '../../core/utils/home-path';
       display: flex; align-items: center; gap: 10px;
       text-decoration: none;
     }
-    .nav-logo {
+    .nav-logo-img {
       width: 40px; height: 40px; border-radius: 12px;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
+      display: block;
+      object-fit: cover;
       transition: transform 0.2s ease;
     }
-    .nav-logo.small { width: 36px; height: 36px; border-radius: 10px; }
-    .nav-logo mat-icon { font-size: 22px; width: 22px; height: 22px; }
-    .nav-logo.small mat-icon { font-size: 20px; width: 20px; height: 20px; }
-    .nav-brand:hover .nav-logo { transform: scale(1.1); }
+    .nav-logo-img.small { width: 36px; height: 36px; border-radius: 10px; }
+    .nav-brand:hover .nav-logo-img { transform: scale(1.1); }
     .nav-name {
       font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
       background: linear-gradient(135deg, #4f46e5, #9333ea);
@@ -578,12 +575,12 @@ import { homePathForRole } from '../../core/utils/home-path';
       position: relative;
       z-index: 1;
     }
-    .cta-icon {
-      font-size: 64px;
-      width: 64px;
-      height: 64px;
-      color: #fff;
-      margin-bottom: 24px;
+    .cta-logo {
+      width: 80px; height: 80px;
+      border-radius: 18px;
+      display: block;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
     .cta-card h2 {
       font-size: clamp(32px, 4vw, 48px);

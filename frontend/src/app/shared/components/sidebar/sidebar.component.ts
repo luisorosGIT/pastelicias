@@ -46,7 +46,7 @@ const NAV_ITEMS: NavItem[] = [
             @if (brandLogoUrl()) {
               <img [src]="brandLogoUrl()" [alt]="brandName()" (error)="onBrandLogoError()" />
             } @else {
-              <mat-icon>cake</mat-icon>
+              <img src="assets/branding/logo.png" alt="Pastelicias" class="brand-fallback-img" />
             }
           </div>
           <div class="brand-text">
@@ -167,12 +167,11 @@ const NAV_ITEMS: NavItem[] = [
       width: 40px;
       height: 40px;
       border-radius: var(--radius-lg);
-      background: var(--color-primary-container);
-      color: var(--color-on-primary-container);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      background: transparent;
     }
     .brand-logo mat-icon {
       font-variation-settings: 'FILL' 1;
@@ -180,6 +179,10 @@ const NAV_ITEMS: NavItem[] = [
     .brand-logo img {
       width: 100%;
       height: 100%;
+      object-fit: cover;
+    }
+    .brand-fallback-img {
+      width: 100%; height: 100%;
       object-fit: cover;
     }
     .brand-text { display: flex; flex-direction: column; line-height: 1.2; }
