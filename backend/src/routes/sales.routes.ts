@@ -111,7 +111,19 @@ router.post('/', roles.noInventory, async (req: AuthRequest, res: Response) => {
     invalidatePaths('/api/sales', '/api/recipes', '/api/dashboard', '/api/reports');
     return created(res, sale, 'Venta registrada exitosamente');
   } catch (error) {
-    console.error('[sales/create]', error);
+    // Log enriquecido para diagnosticar 500s sin tener que adivinar.
+    const e = error as { code?: string; message?: string; meta?: unknown; stack?: string };
+    console.error('[sales/create] ERROR:', {
+      message: e?.message,
+      code: e?.code,
+      meta: e?.meta,
+      stack: e?.stack?.split('\n').slice(0, 5).join('\n'),
+      // Datos del request para contexto
+      userId: req.user?.id,
+      branchId: req.branchId,
+      bodyKeys: req.body ? Object.keys(req.body) : null,
+      itemsCount: Array.isArray(req.body?.items) ? req.body.items.length : null,
+    });
     return serverError(res);
   }
 });
