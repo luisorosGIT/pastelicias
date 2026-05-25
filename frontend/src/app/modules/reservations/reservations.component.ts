@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +31,14 @@ const COLUMNS: KanbanColumn[] = [
 
 const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS', 'READY', 'DELIVERED'];
 
+/** Cuántas horas se mantiene una reserva DELIVERED en su columna antes de
+ *  bajar a la sección de Historial. */
+const DELIVERY_KEEP_HOURS = 24;
+
+/** Cuántas tarjetas puede tener una columna en modo cómodo antes de
+ *  cambiar a modo compacto (con expandir individual). */
+const COMPACT_THRESHOLD = 3;
+
 @Component({
   selector: 'app-reservations',
   standalone: true,
@@ -58,56 +66,85 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
             <div class="column-header" [style.--accent]="col.color">
               <mat-icon [style.color]="col.color">{{ col.icon }}</mat-icon>
               <span class="column-title">{{ col.label }}</span>
-              <span class="column-count">{{ reservations.grouped()[col.status].length }}</span>
+              <span class="column-count">{{ itemsForColumn(col.status).length }}</span>
             </div>
 
-            <div class="column-body">
-              @if (reservations.grouped()[col.status].length === 0) {
+            <div class="column-body" [class.compact]="isCompactColumn(col.status)">
+              @if (itemsForColumn(col.status).length === 0) {
                 <div class="column-empty">Sin reservaciones</div>
               } @else {
-                @for (r of reservations.grouped()[col.status]; track r.id) {
-                  <div class="reservation-card" [style.borderLeftColor]="col.color">
-                    <div class="card-top">
-                      <strong>{{ r.clientName }}</strong>
-                      <span class="muted">{{ r.phone }}</span>
-                    </div>
+                @for (r of itemsForColumn(col.status); track r.id) {
+                  <div class="reservation-card"
+                       [class.compact-card]="isCompactColumn(col.status) && !isExpanded(r.id)"
+                       [style.borderLeftColor]="col.color">
 
-                    <div class="card-product">
-                      @if (r.customProduct) {
-                        <mat-icon>cake</mat-icon> <span>{{ r.customProduct }}</span>
-                      } @else {
-                        <mat-icon>restaurant</mat-icon> <span>{{ recipeName(r.recipeId) }}</span>
-                      }
-                    </div>
-
-                    @if (r.details) {
-                      <p class="card-details">{{ r.details }}</p>
-                    }
-
-                    <div class="card-meta">
-                      <span><mat-icon>schedule</mat-icon> {{ r.deliveryDate | date:'dd/MM HH:mm' }}</span>
-                    </div>
-
-                    <div class="card-finance">
-                      <div>
-                        <span class="label">Total</span>
-                        <strong>{{ r.totalPrice | currency:'S/ ':'symbol':'1.2-2' }}</strong>
-                      </div>
-                      <div>
-                        <span class="label">Anticipo</span>
-                        <strong>{{ r.advance | currency:'S/ ':'symbol':'1.2-2' }}</strong>
-                      </div>
-                      <div>
-                        <span class="label">Saldo</span>
-                        <strong>{{ (r.totalPrice - r.advance) | currency:'S/ ':'symbol':'1.2-2' }}</strong>
-                      </div>
-                    </div>
-
-                    @if (nextStatus(r.status); as next) {
-                      <button mat-stroked-button class="advance-btn" (click)="advance(r)">
-                        <mat-icon>arrow_forward</mat-icon>
-                        Mover a {{ labelOf(next) }}
+                    @if (isCompactColumn(col.status) && !isExpanded(r.id)) {
+                      <!-- ─── Modo compacto ─── -->
+                      <button class="compact-row" (click)="toggleCard(r.id)" type="button">
+                        <div class="compact-main">
+                          <strong>{{ r.clientName }}</strong>
+                          <span class="compact-meta">
+                            @if (r.customProduct) { {{ r.customProduct }} }
+                            @else { {{ recipeName(r.recipeId) }} }
+                            · {{ r.deliveryDate | date:'dd/MM HH:mm' }}
+                          </span>
+                        </div>
+                        <div class="compact-right">
+                          <span class="compact-total">{{ r.totalPrice | currency:'S/ ':'symbol':'1.0-0' }}</span>
+                          <mat-icon class="compact-chevron">expand_more</mat-icon>
+                        </div>
                       </button>
+                    } @else {
+                      <!-- ─── Modo expandido (normal) ─── -->
+                      @if (isCompactColumn(col.status)) {
+                        <button class="collapse-btn" (click)="toggleCard(r.id)" type="button"
+                                matTooltip="Colapsar">
+                          <mat-icon>expand_less</mat-icon>
+                        </button>
+                      }
+
+                      <div class="card-top">
+                        <strong>{{ r.clientName }}</strong>
+                        <span class="muted">{{ r.phone }}</span>
+                      </div>
+
+                      <div class="card-product">
+                        @if (r.customProduct) {
+                          <mat-icon>cake</mat-icon> <span>{{ r.customProduct }}</span>
+                        } @else {
+                          <mat-icon>restaurant</mat-icon> <span>{{ recipeName(r.recipeId) }}</span>
+                        }
+                      </div>
+
+                      @if (r.details) {
+                        <p class="card-details">{{ r.details }}</p>
+                      }
+
+                      <div class="card-meta">
+                        <span><mat-icon>schedule</mat-icon> {{ r.deliveryDate | date:'dd/MM HH:mm' }}</span>
+                      </div>
+
+                      <div class="card-finance">
+                        <div>
+                          <span class="label">Total</span>
+                          <strong>{{ r.totalPrice | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                        </div>
+                        <div>
+                          <span class="label">Anticipo</span>
+                          <strong>{{ r.advance | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                        </div>
+                        <div>
+                          <span class="label">Saldo</span>
+                          <strong>{{ (r.totalPrice - r.advance) | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                        </div>
+                      </div>
+
+                      @if (nextStatus(r.status); as next) {
+                        <button mat-stroked-button class="advance-btn" (click)="advance(r)">
+                          <mat-icon>arrow_forward</mat-icon>
+                          Mover a {{ labelOf(next) }}
+                        </button>
+                      }
                     }
                   </div>
                 }
@@ -116,6 +153,44 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
           </div>
         }
       </div>
+
+      <!-- ─── Historial de entregados (>24h) ──────────────────────────────── -->
+      @if (historyDelivered().length > 0) {
+        <section class="history">
+          <header class="history-header" (click)="historyOpen.set(!historyOpen())">
+            <div class="history-title">
+              <mat-icon>history</mat-icon>
+              <span>Historial de entregados</span>
+              <span class="history-count">{{ historyDelivered().length }}</span>
+            </div>
+            <mat-icon class="history-chevron" [class.open]="historyOpen()">expand_more</mat-icon>
+          </header>
+
+          @if (historyOpen()) {
+            <div class="history-table">
+              <div class="history-row history-row-head">
+                <div>Cliente</div>
+                <div>Teléfono</div>
+                <div>Producto</div>
+                <div>Entregado el</div>
+                <div class="ta-right">Total</div>
+              </div>
+              @for (r of historyDelivered(); track r.id) {
+                <div class="history-row">
+                  <div><strong>{{ r.clientName }}</strong></div>
+                  <div class="muted">{{ r.phone }}</div>
+                  <div>
+                    @if (r.customProduct) { {{ r.customProduct }} }
+                    @else { {{ recipeName(r.recipeId) }} }
+                  </div>
+                  <div class="muted">{{ r.updatedAt | date:'dd/MM/yy HH:mm' }}</div>
+                  <div class="ta-right"><strong>{{ r.totalPrice | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
     }
   `,
   styles: [`
@@ -168,6 +243,9 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
       gap: 8px;
       min-height: 120px;
     }
+    /* En modo compacto el padding entre tarjetas es menor para meter más en el alto */
+    .column-body.compact { gap: 4px; }
+
     .column-empty {
       text-align: center;
       padding: 24px 8px;
@@ -177,6 +255,7 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
     }
 
     .reservation-card {
+      position: relative;
       background: var(--color-surface-low);
       border-radius: var(--radius-sm);
       padding: 14px;
@@ -184,12 +263,87 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
       flex-direction: column;
       gap: 8px;
       border-left: 3px solid #CBD5E1;
-      transition: all 0.15s;
+      transition: background 0.15s ease;
     }
     .reservation-card:hover {
       background: var(--color-primary-soft);
     }
+    .reservation-card.compact-card {
+      padding: 0;
+      gap: 0;
+    }
 
+    /* ─── Compact row ─── */
+    .compact-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      border-radius: inherit;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: background 0.15s ease;
+    }
+    .compact-row:hover { background: rgba(99, 102, 241, 0.08); }
+    .compact-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .compact-main strong {
+      font-size: 13px;
+      color: #1E293B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .compact-meta {
+      font-size: 11.5px;
+      color: #64748B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .compact-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .compact-total {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #4F46E5;
+    }
+    .compact-chevron {
+      font-size: 18px; width: 18px; height: 18px;
+      color: #94A3B8;
+    }
+
+    /* ─── Botón colapsar en modo expandido (cuando estamos en col compacta) ─── */
+    .collapse-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(148, 163, 184, 0.12);
+      color: #64748B;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s ease;
+    }
+    .collapse-btn:hover { background: rgba(148, 163, 184, 0.22); }
+    .collapse-btn mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+    /* ─── Card normal (sin cambios) ─── */
     .card-top { display: flex; flex-direction: column; gap: 0; }
     .card-top strong { font-size: 14px; color: #1E293B; }
     .muted { color: #94A3B8; font-size: 12px; }
@@ -252,10 +406,108 @@ const STATUS_ORDER: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'IN_PROCESS',
       justify-content: center;
       padding: 64px;
     }
+
+    /* ─── Historial ─── */
+    .history {
+      margin-top: 32px;
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-2);
+      overflow: hidden;
+    }
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .history-header:hover { background: rgba(99, 102, 241, 0.05); }
+    .history-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 700;
+      color: #1E293B;
+    }
+    .history-title mat-icon { color: #64748B; }
+    .history-count {
+      background: #E2E8F0;
+      color: #475569;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .history-chevron {
+      color: #94A3B8;
+      transition: transform 0.2s ease;
+    }
+    .history-chevron.open { transform: rotate(180deg); }
+
+    .history-table {
+      border-top: 1px solid #E2E8F0;
+    }
+    .history-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1.8fr 1.5fr 1fr;
+      gap: 12px;
+      padding: 12px 20px;
+      align-items: center;
+      font-size: 13px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-row-head {
+      background: #F8FAFC;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #64748B;
+    }
+    .history-row-head:hover { background: #F8FAFC; }
+    .history-row:not(.history-row-head):hover { background: #FAFBFF; }
+    .ta-right { text-align: right; }
+
+    @media (max-width: 720px) {
+      .history-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 12px 16px;
+      }
+      .history-row > :nth-child(3),
+      .history-row > :nth-child(4) {
+        grid-column: 1 / -1;
+        font-size: 12px;
+      }
+      .history-row-head { display: none; }
+    }
   `],
 })
 export class ReservationsComponent implements OnInit {
   columns = COLUMNS;
+  compactThreshold = COMPACT_THRESHOLD;
+
+  /** IDs de las cards expandidas mientras la columna está en modo compacto. */
+  expandedCards = signal<Set<string>>(new Set());
+
+  /** Si el panel de Historial está abierto. Por defecto cerrado para no
+   *  ensuciar la vista cuando crezca con muchos meses de ventas. */
+  historyOpen = signal(false);
+
+  /** Las DELIVERED recientes (< 24h desde updatedAt) que se quedan en la
+   *  columna del kanban. */
+  recentDelivered = computed(() =>
+    this.reservations.grouped().DELIVERED.filter((r) => this.isRecentDelivery(r))
+  );
+
+  /** Las DELIVERED viejas (>= 24h) que van a la sección de Historial, ordenadas
+   *  de la más reciente a la más antigua. */
+  historyDelivered = computed(() =>
+    this.reservations.grouped().DELIVERED
+      .filter((r) => !this.isRecentDelivery(r))
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  );
 
   constructor(
     public reservations: ReservationsService,
@@ -271,6 +523,40 @@ export class ReservationsComponent implements OnInit {
       await this.branchService.loadBranches();
     }
     await Promise.all([this.reservations.load(), this.recipesService.load()]);
+  }
+
+  /** Items que se muestran en la columna del kanban. DELIVERED solo muestra
+   *  los recientes; el resto muestra todos. */
+  itemsForColumn(status: ReservationStatus): Reservation[] {
+    if (status === 'DELIVERED') return this.recentDelivered();
+    return this.reservations.grouped()[status];
+  }
+
+  /** True cuando la columna tiene más items que el umbral cómodo y debe
+   *  cambiar a modo compacto (cards chicas + expandir individual). */
+  isCompactColumn(status: ReservationStatus): boolean {
+    return this.itemsForColumn(status).length > COMPACT_THRESHOLD;
+  }
+
+  /** ¿La reservación está dentro del periodo de gracia en la columna DELIVERED? */
+  private isRecentDelivery(r: Reservation): boolean {
+    if (r.status !== 'DELIVERED') return true;
+    if (!r.updatedAt) return true; // fallback si el backend aún no manda updatedAt
+    const updatedAt = new Date(r.updatedAt).getTime();
+    return Date.now() - updatedAt < DELIVERY_KEEP_HOURS * 60 * 60 * 1000;
+  }
+
+  toggleCard(id: string): void {
+    this.expandedCards.update((s) => {
+      const next = new Set(s);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  isExpanded(id: string): boolean {
+    return this.expandedCards().has(id);
   }
 
   recipeName(id: string | null): string {

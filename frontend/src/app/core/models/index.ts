@@ -133,6 +133,8 @@ export interface Reservation {
   advance: number;
   status: ReservationStatus;
   createdAt: string;
+  /** Última modificación. Usado para auto-archivar DELIVERED después de 24h. */
+  updatedAt: string;
 }
 
 export interface Production {
