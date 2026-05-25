@@ -1,13 +1,10 @@
 import { Routes } from '@angular/router';
-import { adminAuthGuard, adminGuestGuard } from './admin-auth.guard';
+import { adminAuthGuard } from './admin-auth.guard';
 
+// NOTA: La ruta /admin/login fue eliminada. El admin entra por el login
+// público /auth/login — el backend detecta si el email pertenece a la tabla
+// admins y devuelve un adminToken que AuthService guarda en AdminAuthService.
 export const ADMIN_ROUTES: Routes = [
-  {
-    path: 'login',
-    canActivate: [adminGuestGuard],
-    loadComponent: () =>
-      import('./pages/admin-login.component').then((m) => m.AdminLoginComponent),
-  },
   {
     path: '',
     canActivate: [adminAuthGuard],

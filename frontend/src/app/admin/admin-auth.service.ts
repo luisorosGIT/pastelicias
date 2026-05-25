@@ -70,7 +70,8 @@ export class AdminAuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(ADMIN_KEY);
     this._admin.set(null);
-    this.router.navigate(['/admin/login']);
+    // Logout admin → vuelve al login publico unificado
+    this.router.navigate(['/auth/login']);
   }
 
   /** Limpia sin redirect — usado por el interceptor en 401. */
