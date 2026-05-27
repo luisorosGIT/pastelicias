@@ -134,7 +134,7 @@ import { getErrorMessage } from '../../core/utils/error-message';
           @if (summary()!.sales.length === 0) {
             <p class="empty-text muted">No hay ventas en este período.</p>
           } @else {
-            <div class="table-wrapper">
+            <div class="table-wrapper sales-scroll">
               <table class="data-table">
                 <thead>
                   <tr>
@@ -146,7 +146,7 @@ import { getErrorMessage } from '../../core/utils/error-message';
                   </tr>
                 </thead>
                 <tbody>
-                  @for (s of pagedSales(); track s.id) {
+                  @for (s of summary()!.sales; track s.id) {
                     <tr>
                       <td><code class="ticket-code">{{ shortTicket(s.ticketCode) }}</code></td>
                       <td>{{ s.createdAt | date:'dd/MM HH:mm' }}</td>
@@ -163,18 +163,12 @@ import { getErrorMessage } from '../../core/utils/error-message';
                 </tbody>
               </table>
             </div>
-
-            @if (totalPages() > 1) {
-              <div class="pagination">
-                <button mat-icon-button (click)="prevPage()" [disabled]="page() === 1">
-                  <mat-icon>chevron_left</mat-icon>
-                </button>
-                <span class="page-info">Página {{ page() }} de {{ totalPages() }} ({{ summary()!.sales.length }} ventas)</span>
-                <button mat-icon-button (click)="nextPage()" [disabled]="page() === totalPages()">
-                  <mat-icon>chevron_right</mat-icon>
-                </button>
-              </div>
+            @if (summary()!.sales.length > 7) {
+              <p class="scroll-hint muted">
+                Mostrando {{ summary()!.sales.length }} ventas — desplázate dentro de la tabla para ver más
+              </p>
             }
+
           }
         </div>
 
@@ -453,6 +447,23 @@ import { getErrorMessage } from '../../core/utils/error-message';
     .empty-text { padding: 24px 0; text-align: center; font-size: 13px; margin: 0; }
 
     .table-wrapper { overflow-x: auto; }
+    /* Tabla de Ventas Registradas: max ~7 filas visibles + scroll vertical */
+    .sales-scroll {
+      max-height: 360px;
+      overflow-y: auto;
+    }
+    /* Header sticky para que se vea siempre al scrollear */
+    .sales-scroll .data-table thead th {
+      position: sticky;
+      top: 0;
+      background: #f8fafc;
+      z-index: 1;
+    }
+    .scroll-hint {
+      font-size: 12px;
+      text-align: center;
+      margin: 8px 0 0;
+    }
     .data-table {
       width: 100%;
       border-collapse: collapse;
@@ -651,22 +662,9 @@ import { getErrorMessage } from '../../core/utils/error-message';
 })
 export class ReportsComponent implements OnInit {
   filter = signal<DateFilter>('month');
-  page = signal(1);
   downloading = signal(false);
-  pageSize = 10;
 
   summary = computed(() => this.reports.summary());
-
-  totalPages = computed(() => {
-    const total = this.summary()?.sales.length ?? 0;
-    return Math.max(1, Math.ceil(total / this.pageSize));
-  });
-
-  pagedSales = computed(() => {
-    const sales = this.summary()?.sales ?? [];
-    const start = (this.page() - 1) * this.pageSize;
-    return sales.slice(start, start + this.pageSize);
-  });
 
   /** Subtítulo del KPI de Valor de Inventario — incluye conteo total y críticos
    *  para dar contexto adicional sin ocupar otra tarjeta. */
@@ -760,19 +758,11 @@ export class ReportsComponent implements OnInit {
 
   async setFilter(f: DateFilter): Promise<void> {
     this.filter.set(f);
-    this.page.set(1);
     await this.reports.load(f);
   }
 
   shortTicket(code: string): string {
     return code.slice(0, 8);
-  }
-
-  prevPage(): void {
-    if (this.page() > 1) this.page.update((p) => p - 1);
-  }
-  nextPage(): void {
-    if (this.page() < this.totalPages()) this.page.update((p) => p + 1);
   }
 
   async downloadCsv(): Promise<void> {

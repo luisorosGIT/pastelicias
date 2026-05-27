@@ -54,9 +54,13 @@ router.get('/summary', roles.ownerOnly, withCache(15_000), async (req: AuthReque
       }),
     ]);
 
+    // Definición contable estándar:
+    //   - Brutas: total facturado (incluye IGV) — lo que entró en caja
+    //   - Netas:  subtotal (sin IGV) — ingreso real del negocio (IGV es de SUNAT)
+    // El impacto de merma se reporta aparte como su propia métrica.
     const grossSales = sales.reduce((s, sale) => s + sale.total, 0);
+    const netSales   = sales.reduce((s, sale) => s + sale.subtotal, 0);
     const wasteImpact = wasteLogs.reduce((s, w) => s + w.cost, 0);
-    const netSales = grossSales - wasteImpact;
     const wastePercent = grossSales > 0 ? (wasteImpact / grossSales) * 100 : 0;
 
     // Top sucursales (solo vista global)
@@ -353,40 +357,127 @@ router.get('/export', roles.ownerOnly, async (req: AuthRequest, res: Response) =
       ? { branchId }
       : { branch: { businessId } };
 
-    const sales = await prisma.sale.findMany({
-      where: { ...tenantFilter, createdAt: { gte: from, lte: to } },
-      include: {
-        items: { include: { recipe: { select: { name: true } } } },
-        branch: { select: { name: true } },
-        user: { select: { fullName: true } },
-      },
-      orderBy: { createdAt: 'desc' },
+    const [business, sales] = await Promise.all([
+      prisma.business.findUnique({
+        where: { id: businessId },
+        select: { name: true, ruc: true, taxRate: true },
+      }),
+      prisma.sale.findMany({
+        where: { ...tenantFilter, createdAt: { gte: from, lte: to } },
+        include: {
+          items: { include: { recipe: { select: { name: true } } } },
+          branch: { select: { name: true } },
+          user: { select: { fullName: true } },
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+    ]);
+
+    // ─── Generar CSV formato "Cierre de Caja" ─────────────────────────────
+    // - BOM UTF-8 al inicio (﻿) para que Excel reconozca acentos
+    // - Separador ; (estándar Excel español) en lugar de ,
+    // - Comillas para escapar valores con espacios o ;
+    // - Secciones: encabezado del negocio, resumen, detalle, totales por método
+    const SEP = ';';
+    const q = (v: unknown): string => {
+      const s = v == null ? '' : String(v);
+      // Si contiene separador, comillas o salto de línea: envolver y escapar comillas
+      if (/[";\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+    const money = (n: number): string => n.toFixed(2).replace('.', ',');
+    const pad = (s: string): string => q(s);
+
+    const periodLabel: Record<DateFilter, string> = {
+      today: 'Hoy', yesterday: 'Ayer', week: 'Última semana',
+      month: 'Último mes', quarter: 'Último trimestre', year: 'Último año',
+    };
+
+    // Totales por método de pago
+    const byMethod = new Map<string, { count: number; total: number }>();
+    for (const s of sales) {
+      const m = byMethod.get(s.paymentMethod) ?? { count: 0, total: 0 };
+      m.count++;
+      m.total += s.total;
+      byMethod.set(s.paymentMethod, m);
+    }
+    const methodLabel: Record<string, string> = {
+      CASH: 'Efectivo', CARD: 'Tarjeta', YAPE_PLIN: 'Yape/Plin',
+    };
+
+    const totalGross   = sales.reduce((acc, s) => acc + s.total, 0);
+    const totalNet     = sales.reduce((acc, s) => acc + s.subtotal, 0);
+    const totalTax     = sales.reduce((acc, s) => acc + s.taxAmount, 0);
+
+    const lines: string[] = [];
+    // Encabezado
+    lines.push(pad('CIERRE DE CAJA'));
+    lines.push(pad(`Negocio:${SEP}${business?.name ?? '—'}`));
+    if (business?.ruc) lines.push(pad(`RUC:${SEP}${business.ruc}`));
+    lines.push(pad(`Sucursal:${SEP}${branchId ? sales[0]?.branch.name ?? '—' : 'Todas las sucursales'}`));
+    lines.push(pad(`Período:${SEP}${periodLabel[filter]}`));
+    lines.push(pad(`Desde:${SEP}${from.toISOString().slice(0, 16).replace('T', ' ')}`));
+    lines.push(pad(`Hasta:${SEP}${to.toISOString().slice(0, 16).replace('T', ' ')}`));
+    lines.push(pad(`Generado:${SEP}${new Date().toISOString().slice(0, 16).replace('T', ' ')}`));
+    lines.push('');
+
+    // Resumen
+    lines.push(pad('RESUMEN'));
+    lines.push(['Ventas totales', String(sales.length)].map(q).join(SEP));
+    lines.push(['Ventas brutas (con IGV)', money(totalGross)].map(q).join(SEP));
+    lines.push(['Ventas netas (sin IGV)', money(totalNet)].map(q).join(SEP));
+    lines.push(['IGV (recaudado)', money(totalTax)].map(q).join(SEP));
+    lines.push('');
+
+    // Por método de pago
+    lines.push(pad('POR MÉTODO DE PAGO'));
+    lines.push(['Método', 'Cantidad', 'Total'].map(q).join(SEP));
+    for (const [m, info] of byMethod) {
+      lines.push([methodLabel[m] ?? m, String(info.count), money(info.total)].map(q).join(SEP));
+    }
+    lines.push('');
+
+    // Detalle de ventas
+    lines.push(pad('DETALLE DE VENTAS'));
+    lines.push(
+      ['#', 'Ticket', 'Fecha', 'Sucursal', 'Vendedor', 'Método', 'Items', 'Subtotal', 'IGV', 'Total']
+        .map(q).join(SEP)
+    );
+    sales.forEach((s, idx) => {
+      const date = s.createdAt.toISOString().slice(0, 16).replace('T', ' ');
+      lines.push([
+        String(idx + 1),
+        s.ticketCode.slice(0, 8),
+        date,
+        s.branch.name,
+        s.user?.fullName ?? '—',
+        methodLabel[s.paymentMethod] ?? s.paymentMethod,
+        String(s.items.length),
+        money(s.subtotal),
+        money(s.taxAmount),
+        money(s.total),
+      ].map(q).join(SEP));
     });
 
-    // Generar CSV
-    const rows = ['Sucursal,Vendedor,Ticket,Fecha,Método Pago,Subtotal,IGV,Total'];
-    sales.forEach((s) => {
-      rows.push(
-        [
-          s.branch.name,
-          s.user?.fullName ?? '—',
-          s.ticketCode,
-          s.createdAt.toISOString(),
-          s.paymentMethod,
-          s.subtotal,
-          s.taxAmount,
-          s.total,
-        ].join(',')
-      );
-    });
+    // Total general al final
+    lines.push('');
+    lines.push([
+      '', 'TOTAL', '', '', '', '', String(sales.length),
+      money(totalNet), money(totalTax), money(totalGross),
+    ].map(q).join(SEP));
 
+    // BOM UTF-8 al inicio (﻿) para Excel
+    const csv = '﻿' + lines.join('\r\n');
+
+    const filenameDate = new Date().toISOString().slice(0, 10);
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="reporte-ventas-${filter}.csv"`
+      `attachment; filename="cierre-caja-${filter}-${filenameDate}.csv"`
     );
-    res.send(rows.join('\n'));
-  } catch {
+    res.send(csv);
+  } catch (e) {
+    console.error('[reports/export]', e);
     return serverError(res);
   }
 });
