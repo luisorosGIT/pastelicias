@@ -172,7 +172,6 @@ const CATEGORY_COLORS: Record<RecipeCategory, string> = {
             <div class="row"><span>Subtotal</span><strong>{{ subtotal() | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
             <div class="row"><span>IGV ({{ taxRate() }}%)</span><strong>{{ taxAmount() | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
             @if (showInternalCosts()) {
-              <div class="row"><span>Costo de Producción</span><strong class="muted">{{ productionCost() | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
               <div class="row"><span>Margen Bruto</span><strong class="positive">{{ grossMargin() | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
             }
             <div class="row total"><span>TOTAL</span><strong>{{ total() | currency:'S/ ':'symbol':'1.2-2' }}</strong></div>
